@@ -1,0 +1,30 @@
+# Local development database only.
+# Production runs on EasyPanel with its own managed Postgres service.
+#
+#   docker compose up -d      # start Postgres 17
+#   docker compose down       # stop it (data is kept in the named volume)
+#   docker compose down -v     # stop and wipe the data
+
+services:
+  db:
+    image: postgres:17
+    container_name: mirutafit_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mirutafit
+      POSTGRES_PASSWORD: mirutafit_dev_password
+      POSTGRES_DB: mirutafit
+    # Host port 5433 (5432 is used by another local project's Postgres).
+    # The container still listens on 5432 internally.
+    ports:
+      - "5433:5432"
+    volumes:
+      - mirutafit_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mirutafit -d mirutafit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mirutafit_pgdata:

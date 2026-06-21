@@ -1,0 +1,188 @@
+// MiRutaFit — database schema (Prisma 7)
+// Docs: docs/database.md
+//
+// The auth-related models (User, Session, Account, Verification) follow the
+// schema expected by better-auth + its admin plugin. Do not rename their
+// fields. Custom profile fields and app domain models are documented inline.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Application user. Auth is handled by better-auth (email + password for now).
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String? // avatar URL (kept shallow for now)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // better-auth admin plugin.
+  // `role` is a comma-separated list of roles (e.g. "user" or "user,admin").
+  role       String?   @default("user")
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  // Optional profile data (see better-auth additionalFields in src/lib/auth.ts).
+  firstName String?
+  lastName  String?
+  country   String?
+  phone     String?
+
+  sessions Session[]
+  accounts Account[]
+
+  @@map("user")
+}
+
+/// Active login session issued by better-auth.
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // admin plugin: set when an admin impersonates this user.
+  impersonatedBy String?
+
+  @@map("session")
+}
+
+/// Credential / OAuth account linked to a user.
+/// For email+password the hashed password lives in `password`.
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+/// Key/value store for runtime configuration managed from the admin panel
+/// (e.g. SMTP settings). Each row holds a JSON value under a string key.
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("system_setting")
+}
+
+/// Short-lived verification tokens (email verification, password reset, etc.).
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+/// One-time codes issued by the reusable verification-code module
+/// (src/lib/verification-codes.ts). Used for password recovery now and other
+/// flows later. The code itself is stored hashed, never in plaintext.
+model VerificationCode {
+  id         String    @id @default(cuid())
+  identifier String // who the code is for, e.g. an email
+  purpose    String // what it's for, e.g. "password_reset"
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([identifier, purpose])
+  @@map("verification_code")
+}
+
+/// A folder in the admin Media library (can be nested).
+model MediaFolder {
+  id        String   @id @default(cuid())
+  name      String
+  parentId  String?
+  parent    MediaFolder?  @relation("FolderTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MediaFolder[] @relation("FolderTree")
+  files     MediaFile[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+  @@map("media_folder")
+}
+
+/// A file in the admin Media library. Stored on disk as `fileName` (uuid+ext);
+/// `name` is the friendly display name. Private files are only served to admins.
+model MediaFile {
+  id        String   @id @default(cuid())
+  name      String // display name
+  fileName  String   @unique // uuid.ext on disk, also the /media/<fileName> slug
+  mimeType  String
+  size      Int // bytes
+  isPublic  Boolean  @default(true)
+  width     Int? // images/videos
+  height    Int?
+  folderId  String?
+  folder    MediaFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([folderId])
+  @@map("media_file")
+}
+
+/// A configured widget instance from the Widget library (reusable across pages).
+/// `type` maps to a definition in the widget registry (src/widgets); `config`
+/// holds that widget's settings (shape depends on the type).
+model Widget {
+  id        String   @id @default(cuid())
+  type      String // registry key, e.g. "slider" | "richText"
+  name      String // admin-facing label
+  config    Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@map("widget")
+}
+
+/// A composable page. `layout` is a JSON tree of rows -> columns (12-col grid)
+/// -> widget instance ids. The home page has slug "home".
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  layout    Json     @default("{\"rows\": []}")
+  status    String   @default("published") // future: draft | published
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("page")
+}
