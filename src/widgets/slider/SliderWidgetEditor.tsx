@@ -6,6 +6,7 @@ import MediaPicker from "@/components/admin/media/MediaPicker";
 import { mediaUrl } from "@/components/admin/media/types";
 import { inputClass } from "@/components/ui/Field";
 import { TrashIcon, ChevronDownIcon, ImageIcon } from "@/components/icons";
+import { useLocalized } from "../LocaleContext";
 import type {
   SliderConfig,
   SliderEffect,
@@ -15,13 +16,14 @@ import type {
 
 /* eslint-disable @next/next/no-img-element */
 
-const EFFECTS: SliderEffect[] = ["slide", "fade", "cube", "coverflow", "flip"];
+const EFFECTS: SliderEffect[] = ["slide", "fade", "cube", "coverflow", "flip", "shatter"];
 
 export default function SliderWidgetEditor({
   config,
   onChange,
 }: WidgetEditorProps<SliderConfig>) {
   const t = useTranslations("admin.widgets.slider");
+  const lt = useLocalized();
   const [pickerFor, setPickerFor] = useState<string | null>(null);
 
   const slides = config.slides ?? [];
@@ -118,10 +120,10 @@ export default function SliderWidgetEditor({
               </button>
               {/* Fields */}
               <div className="grid gap-2">
-                <input value={slide.title} onChange={(e) => setSlide(slide.id, { title: e.target.value })} placeholder={t("slideTitle")} className={inputClass()} />
-                <input value={slide.subtitle} onChange={(e) => setSlide(slide.id, { subtitle: e.target.value })} placeholder={t("slideSubtitle")} className={inputClass()} />
+                <input value={lt.g(slide.title)} onChange={(e) => setSlide(slide.id, { title: lt.s(slide.title, e.target.value) })} placeholder={t("slideTitle")} className={inputClass()} />
+                <input value={lt.g(slide.subtitle)} onChange={(e) => setSlide(slide.id, { subtitle: lt.s(slide.subtitle, e.target.value) })} placeholder={t("slideSubtitle")} className={inputClass()} />
                 <div className="grid gap-2 sm:grid-cols-2">
-                  <input value={slide.buttonText} onChange={(e) => setSlide(slide.id, { buttonText: e.target.value })} placeholder={t("buttonText")} className={inputClass()} />
+                  <input value={lt.g(slide.buttonText)} onChange={(e) => setSlide(slide.id, { buttonText: lt.s(slide.buttonText, e.target.value) })} placeholder={t("buttonText")} className={inputClass()} />
                   <input value={slide.buttonLink} onChange={(e) => setSlide(slide.id, { buttonLink: e.target.value })} placeholder={t("buttonLink")} className={inputClass()} />
                 </div>
               </div>

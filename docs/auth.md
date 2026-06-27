@@ -1,8 +1,8 @@
 # Auth & roles
 
-Powered by **better-auth** (`src/lib/auth.ts`). For now: **email + password
-only**. Google/Facebook are planned and slot in as `socialProviders` later
-without changing the rest of the setup.
+Powered by **better-auth** (`src/lib/auth.ts`). **Email + password**, plus
+**Google OAuth** (admin-configurable — see "Social login" below). Facebook
+slots in the same way.
 
 ## Roles & ban
 
@@ -63,7 +63,26 @@ password. Built on the reusable verification-code module
 
 `firstName, lastName, country, phone` are declared as `user.additionalFields`
 in `src/lib/auth.ts` and mirrored as columns in `prisma/schema.prisma`. The
-browser client keeps them typed via `inferAdditionalFields`.
+browser client keeps them typed via `inferAdditionalFields`. `language` is also
+an additional field, set automatically at signup (see [i18n](i18n.md)).
+
+## Social login (OAuth)
+
+Configured from the **admin**, not env. Credentials live in the `oauth`
+`system_setting` (`getOauthSettings`/`saveOauthSettings`), edited under
+**Admin → Users → Settings** (`GoogleLoginSettings`): an enable toggle + Client
+ID + Secret (the secret is write-only, like the SMTP password).
+
+- `src/lib/auth.ts` reads the settings via **top-level await** and passes
+  `socialProviders.google` to better-auth. Because better-auth builds the
+  provider config at startup, **changing the Client ID/Secret needs a server
+  restart**; the enable toggle only controls the button (live).
+- Login/register render `<SocialLoginButtons>` which shows "Continue with Google"
+  when `getSocialLoginConfig().google` is true, then calls
+  `signIn.social({ provider: "google", callbackURL: "/" })`.
+- **Redirect URI** to whitelist in Google Cloud Console:
+  `{origin}/api/auth/callback/google` (e.g. `http://localhost:3000/...` in dev).
+- Facebook follows the identical pattern (add a `facebook` provider + fields).
 
 ## Env vars
 

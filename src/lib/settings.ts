@@ -205,3 +205,138 @@ export async function saveFooterConfig(input: FooterConfig): Promise<void> {
     update: { value: input },
   });
 }
+
+// ── Contact settings ──────────────────────────────────────────
+// Where contact-form notifications are delivered and which address they are
+// sent from. Stored under key "contact". The recipient + sender are admin-
+// configurable (the SMTP account still does the actual delivery).
+
+export type ContactSettings = {
+  recipientEmail: string; // where new-message notifications are delivered
+  fromEmail: string; // From address used for contact notifications
+  fromName: string; // From display name
+  notify: boolean; // send an email when a new message arrives
+};
+
+export const CONTACT_KEY = "contact";
+
+export const defaultContactSettings: ContactSettings = {
+  recipientEmail: "sluy1283@gmail.com",
+  fromEmail: "contacto@mirutafit.com",
+  fromName: "MiRutaFit",
+  notify: true,
+};
+
+export async function getContactSettings(): Promise<ContactSettings> {
+  const row = await prisma.systemSetting.findUnique({ where: { key: CONTACT_KEY } });
+  if (!row) return defaultContactSettings;
+  return { ...defaultContactSettings, ...(row.value as Partial<ContactSettings>) };
+}
+
+export async function saveContactSettings(input: ContactSettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: CONTACT_KEY },
+    create: { key: CONTACT_KEY, value: input },
+    update: { value: input },
+  });
+}
+
+// ── Community settings ────────────────────────────────────────
+// Moderation policy for visitor comments. Stored under key "community".
+
+export type CommunitySettings = {
+  autoApprove: boolean; // publish new comments immediately (post-moderation)
+};
+
+export const COMMUNITY_KEY = "community";
+
+export const defaultCommunitySettings: CommunitySettings = {
+  autoApprove: false,
+};
+
+export async function getCommunitySettings(): Promise<CommunitySettings> {
+  const row = await prisma.systemSetting.findUnique({ where: { key: COMMUNITY_KEY } });
+  if (!row) return defaultCommunitySettings;
+  return { ...defaultCommunitySettings, ...(row.value as Partial<CommunitySettings>) };
+}
+
+export async function saveCommunitySettings(input: CommunitySettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: COMMUNITY_KEY },
+    create: { key: COMMUNITY_KEY, value: input },
+    update: { value: input },
+  });
+}
+
+// ── OAuth / social login ──────────────────────────────────────
+// Google credentials + enable flag, stored under key "oauth". The secret is
+// sensitive (treated like the SMTP password — never echoed back to the client).
+// NOTE: better-auth reads provider credentials at startup, so changing the
+// client id/secret requires a server restart to take effect. The enable toggle
+// controls the button live.
+
+export type OauthSettings = {
+  googleEnabled: boolean;
+  googleClientId: string;
+  googleClientSecret: string;
+};
+
+export const OAUTH_KEY = "oauth";
+
+export const defaultOauthSettings: OauthSettings = {
+  googleEnabled: false,
+  googleClientId: "",
+  googleClientSecret: "",
+};
+
+export async function getOauthSettings(): Promise<OauthSettings> {
+  try {
+    const row = await prisma.systemSetting.findUnique({ where: { key: OAUTH_KEY } });
+    if (!row) return defaultOauthSettings;
+    return { ...defaultOauthSettings, ...(row.value as Partial<OauthSettings>) };
+  } catch {
+    return defaultOauthSettings;
+  }
+}
+
+export async function saveOauthSettings(input: OauthSettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: OAUTH_KEY },
+    create: { key: OAUTH_KEY, value: input },
+    update: { value: input },
+  });
+}
+
+// ── Locale settings ───────────────────────────────────────────
+// Controls which languages the public site offers and how the active one is
+// chosen. Stored under key "locale". See src/lib/locale.ts.
+
+export type LocaleSettings = {
+  mode: "single" | "multi"; // one forced language, or several (auto-detected)
+  single: string; // the language used when mode = "single"
+  enabled: string[]; // enabled languages when mode = "multi"
+  fallback: string; // default when detection finds nothing enabled
+};
+
+export const LOCALE_KEY = "locale";
+
+export const defaultLocaleSettings: LocaleSettings = {
+  mode: "multi",
+  single: "en",
+  enabled: ["en", "es"],
+  fallback: "en",
+};
+
+export async function getLocaleSettings(): Promise<LocaleSettings> {
+  const row = await prisma.systemSetting.findUnique({ where: { key: LOCALE_KEY } });
+  if (!row) return defaultLocaleSettings;
+  return { ...defaultLocaleSettings, ...(row.value as Partial<LocaleSettings>) };
+}
+
+export async function saveLocaleSettings(input: LocaleSettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: LOCALE_KEY },
+    create: { key: LOCALE_KEY, value: input },
+    update: { value: input },
+  });
+}

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { inputClass } from "@/components/ui/Field";
 import { ArrowRightIcon } from "@/components/icons";
 import { WIDGET_EDITORS } from "@/widgets/editors";
+import { LocaleTabs, WidgetLocaleProvider } from "@/widgets/LocaleContext";
 import type { WidgetTypeKey } from "@/widgets/meta";
 import { updateWidgetAction } from "@/app/admin/widgets/actions";
 
@@ -16,11 +17,17 @@ export default function WidgetEditorScreen({
   type,
   name: initialName,
   config: initialConfig,
+  locales,
+  defaultLocale,
+  localeNames,
 }: {
   id: string;
   type: WidgetTypeKey;
   name: string;
   config: Record<string, unknown>;
+  locales: string[];
+  defaultLocale: string;
+  localeNames: Record<string, string>;
 }) {
   const t = useTranslations("admin.widgets");
   const router = useRouter();
@@ -29,6 +36,7 @@ export default function WidgetEditorScreen({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [config, setConfig] = useState<any>(initialConfig);
   const [saving, setSaving] = useState(false);
+  const [editLocale, setEditLocale] = useState(defaultLocale);
 
   const Editor = WIDGET_EDITORS[type];
 
@@ -72,7 +80,16 @@ export default function WidgetEditorScreen({
       </div>
 
       <div className="rounded-2xl border border-ink/5 bg-white p-6 shadow-sm">
-        <Editor config={config} onChange={setConfig} />
+        <LocaleTabs
+          locales={locales}
+          editLocale={editLocale}
+          defaultLocale={defaultLocale}
+          localeNames={localeNames}
+          onSelect={setEditLocale}
+        />
+        <WidgetLocaleProvider value={{ locales, defaultLocale, editLocale }}>
+          <Editor config={config} onChange={setConfig} />
+        </WidgetLocaleProvider>
       </div>
     </div>
   );

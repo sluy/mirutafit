@@ -39,6 +39,17 @@ export async function updateWidgetAction(
   return { ok: true };
 }
 
+/** Lightweight widget list for pickers (e.g. the navbar "reference a widget"). */
+export async function listWidgetOptionsAction(): Promise<
+  { id: string; name: string; type: string }[]
+> {
+  await requireAdmin();
+  return prisma.widget.findMany({
+    orderBy: { updatedAt: "desc" },
+    select: { id: true, name: true, type: true },
+  });
+}
+
 export async function deleteWidgetAction(id: string): Promise<{ ok: boolean }> {
   await requireAdmin();
   await prisma.widget.delete({ where: { id } });

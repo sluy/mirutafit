@@ -36,6 +36,8 @@ model User {
   lastName  String?
   country   String?
   phone     String?
+  // Preferred UI language, set to the active locale when the account is created.
+  language  String?
 
   sessions Session[]
   accounts Account[]
@@ -185,4 +187,108 @@ model Page {
   updatedAt DateTime @updatedAt
 
   @@map("page")
+}
+
+/// Shared taxonomy term (categories and tags), reusable across the app.
+/// `kind` distinguishes them; `key` is a stable snake_case id; labels are
+/// per-locale (see TaxonomyTranslation). See docs/articles.md.
+model Taxonomy {
+  id        String   @id @default(cuid())
+  kind      String // "category" | "tag"
+  key       String // snake_case
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations TaxonomyTranslation[]
+  articles     Article[]             @relation("ArticleTaxonomies")
+
+  @@unique([kind, key])
+  @@index([kind])
+  @@map("taxonomy")
+}
+
+/// Per-locale human label for a taxonomy term.
+model TaxonomyTranslation {
+  id         String   @id @default(cuid())
+  taxonomyId String
+  taxonomy   Taxonomy @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
+  locale     String
+  label      String
+
+  @@unique([taxonomyId, locale])
+  @@map("taxonomy_translation")
+}
+
+/// A blog article ("Artículos"). Shared across locales: cover image, taxonomies,
+/// dates, status. Per-locale content lives in ArticleTranslation. See
+/// docs/articles.md.
+model Article {
+  id          String     @id @default(cuid())
+  coverImage  String? // media fileName (widget + SEO)
+  status      String     @default("draft") // "draft" | "published"
+  publishedAt DateTime? // drives the YYYY-MM-DD url segment + ordering
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  translations ArticleTranslation[]
+  taxonomies   Taxonomy[]           @relation("ArticleTaxonomies")
+
+  @@index([status])
+  @@map("article")
+}
+
+/// A message sent through a public contact widget. `mode` distinguishes the
+/// two contact flows (a regular visitor vs. a brand/sponsor). Read state is
+/// tracked so the admin inbox can mark messages as read. See docs/contact.md.
+model ContactMessage {
+  id        String    @id @default(cuid())
+  mode      String    @default("person") // "person" | "brand"
+  name      String
+  email     String
+  phone     String?
+  topic     String?
+  subject   String
+  message   String
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("contact_message")
+}
+
+/// A public community comment / testimonial. Visitor-submitted comments start
+/// as `pending` and only appear on the wall once `approved` (unless auto-approve
+/// is on). `source` distinguishes visitor comments from admin-seeded ones.
+/// See docs/community.md.
+model Comment {
+  id          String   @id @default(cuid())
+  name        String
+  message     String
+  avatarColor String   @default("#10b981")
+  status      String   @default("pending") // "pending" | "approved" | "hidden"
+  source      String   @default("community") // "community" | "admin"
+  createdAt   DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("comment")
+}
+
+/// Per-locale content for an article.
+model ArticleTranslation {
+  id          String   @id @default(cuid())
+  articleId   String
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  locale      String
+  title       String
+  slug        String
+  description String   @default("") // short excerpt
+  body        String   @default("") // rich HTML from the editor
+  updatedAt   DateTime @updatedAt
+
+  @@unique([articleId, locale])
+  @@unique([locale, slug])
+  @@map("article_translation")
 }

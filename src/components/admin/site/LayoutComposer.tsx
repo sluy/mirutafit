@@ -12,10 +12,18 @@ import {
   useSensors,
   useDraggable,
   useDroppable,
+  closestCorners,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { TrashIcon, ChevronDownIcon, BlocksIcon } from "@/components/icons";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { TrashIcon, BlocksIcon } from "@/components/icons";
 import type { PageLayout, LayoutRow } from "@/widgets/types";
 
 type WidgetRow = { id: string; type: string; name: string };
@@ -26,6 +34,9 @@ const COL_SPAN: Record<number, string> = {
   5: "md:col-span-5", 6: "md:col-span-6", 7: "md:col-span-7", 8: "md:col-span-8",
   9: "md:col-span-9", 10: "md:col-span-10", 11: "md:col-span-11", 12: "md:col-span-12",
 };
+
+// A placement's sortable id encodes its column + index: "placed::<colId>::<index>".
+const placedId = (colId: string, index: number) => `placed::${colId}::${index}`;
 
 export default function LayoutComposer({
   slug,
@@ -64,47 +75,69 @@ export default function LayoutComposer({
     setRows(layout.rows.map((r) => ({ ...r, columns: r.columns.map((c) => (c.id === colId ? { ...c, widgetIds: fn(c.widgetIds) } : c)) })));
 
   const removeWidgetAt = (colId: string, index: number) => mapCol(colId, (ids) => ids.filter((_, i) => i !== index));
-  const moveInCol = (colId: string, index: number, dir: -1 | 1) =>
-    mapCol(colId, (ids) => {
-      const j = index + dir;
-      if (j < 0 || j >= ids.length) return ids;
-      const next = [...ids];
-      [next[index], next[j]] = [next[j], next[index]];
-      return next;
+
+  // Clone helper for cross-column moves.
+  const cloneRows = (rows: LayoutRow[]) =>
+    rows.map((r) => ({ ...r, columns: r.columns.map((c) => ({ ...c, widgetIds: [...c.widgetIds] })) }));
+  const findCol = (rows: LayoutRow[], colId: string) =>
+    rows.flatMap((r) => r.columns).find((c) => c.id === colId);
+
+  const moveWidget = (fromCol: string, fromIdx: number, toCol: string, toIdx: number) => {
+    setLayout((prev) => {
+      const rows = cloneRows(prev.rows);
+      const src = findCol(rows, fromCol);
+      const dst = findCol(rows, toCol);
+      if (!src || !dst) return prev;
+      if (fromCol === toCol) {
+        src.widgetIds = arrayMove(src.widgetIds, fromIdx, toIdx);
+      } else {
+        const [moved] = src.widgetIds.splice(fromIdx, 1);
+        if (moved == null) return prev;
+        dst.widgetIds.splice(Math.min(toIdx, dst.widgetIds.length), 0, moved);
+      }
+      return { rows };
     });
+  };
+
+  const insertWidget = (toCol: string, toIdx: number, widgetId: string) => {
+    setLayout((prev) => {
+      const rows = cloneRows(prev.rows);
+      const dst = findCol(rows, toCol);
+      if (!dst) return prev;
+      dst.widgetIds.splice(Math.min(toIdx, dst.widgetIds.length), 0, widgetId);
+      return { rows };
+    });
+  };
 
   // ── Drag & drop ──
+  type Active =
+    | { source: "palette"; widgetId: string }
+    | { source: "placed"; colId: string; index: number; widgetId: string };
+
   const onDragStart = (e: DragStartEvent) => {
-    const d = e.active.data.current;
-    if (d?.source === "palette") setDragName(byId[d.widgetId]?.name ?? null);
-    if (d?.source === "placed") setDragName(byId[d.widgetId]?.name ?? null);
+    const d = e.active.data.current as Active | undefined;
+    if (d) setDragName(byId[d.widgetId]?.name ?? null);
   };
 
   const onDragEnd = (e: DragEndEvent) => {
     setDragName(null);
-    const over = e.over?.data.current as { colId?: string } | undefined;
-    const active = e.active.data.current as
-      | { source: "palette"; widgetId: string }
-      | { source: "placed"; colId: string; index: number; widgetId: string }
+    const active = e.active.data.current as Active | undefined;
+    const over = e.over?.data.current as
+      | { source?: "placed"; colId?: string; index?: number }
       | undefined;
-    if (!over?.colId || !active) return;
+    if (!active || !over?.colId) return;
+
     const targetCol = over.colId;
+    // Over a placed item → use its index; over an (empty) column → append.
+    const targetIndex = over.source === "placed" && typeof over.index === "number"
+      ? over.index
+      : findCol(layout.rows, targetCol)?.widgetIds.length ?? 0;
 
     if (active.source === "palette") {
-      mapCol(targetCol, (ids) => [...ids, active.widgetId]);
-    } else if (active.source === "placed") {
-      if (active.colId === targetCol) return;
-      // remove from source, append to target
-      setRows(
-        layout.rows.map((r) => ({
-          ...r,
-          columns: r.columns.map((c) => {
-            if (c.id === active.colId) return { ...c, widgetIds: c.widgetIds.filter((_, i) => i !== active.index) };
-            if (c.id === targetCol) return { ...c, widgetIds: [...c.widgetIds, active.widgetId] };
-            return c;
-          }),
-        })),
-      );
+      insertWidget(targetCol, targetIndex, active.widgetId);
+    } else {
+      if (active.colId === targetCol && active.index === targetIndex) return;
+      moveWidget(active.colId, active.index, targetCol, targetIndex);
     }
   };
 
@@ -121,7 +154,7 @@ export default function LayoutComposer({
   };
 
   return (
-    <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-extrabold text-ink">{t("title")}</h1>
@@ -177,7 +210,6 @@ export default function LayoutComposer({
                 {row.columns.map((col) => (
                   <Column
                     key={col.id}
-                    rowId={row.id}
                     colId={col.id}
                     span={col.span}
                     spanClass={COL_SPAN[col.span] ?? "md:col-span-12"}
@@ -187,7 +219,6 @@ export default function LayoutComposer({
                     onSpan={(s) => setSpan(row.id, col.id, s)}
                     onRemoveCol={() => removeColumn(row.id, col.id)}
                     onRemoveWidget={(i) => removeWidgetAt(col.id, i)}
-                    onMove={(i, dir) => moveInCol(col.id, i, dir)}
                     labels={{ span: t("span"), emptyColumn: t("emptyColumn"), removeColumn: t("removeColumn") }}
                   />
                 ))}
@@ -242,10 +273,8 @@ function Column({
   onSpan,
   onRemoveCol,
   onRemoveWidget,
-  onMove,
   labels,
 }: {
-  rowId: string;
   colId: string;
   span: number;
   spanClass: string;
@@ -255,10 +284,11 @@ function Column({
   onSpan: (s: number) => void;
   onRemoveCol: () => void;
   onRemoveWidget: (i: number) => void;
-  onMove: (i: number, dir: -1 | 1) => void;
   labels: { span: string; emptyColumn: string; removeColumn: string };
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: `col-${colId}`, data: { colId } });
+  const items = widgetIds.map((_, i) => placedId(colId, i));
+
   return (
     <div className={spanClass}>
       <div className="mb-1.5 flex items-center justify-between gap-2">
@@ -283,62 +313,58 @@ function Column({
         {widgetIds.length === 0 && (
           <p className="py-4 text-center text-xs text-ink/30">{labels.emptyColumn}</p>
         )}
-        {widgetIds.map((wid, i) => (
-          <PlacedWidget
-            key={`${wid}-${i}`}
-            colId={colId}
-            index={i}
-            widget={byId[wid]}
-            typeLabel={byId[wid] ? typeLabel(byId[wid].type) : "?"}
-            canUp={i > 0}
-            canDown={i < widgetIds.length - 1}
-            onMove={onMove}
-            onRemove={() => onRemoveWidget(i)}
-          />
-        ))}
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          {widgetIds.map((wid, i) => (
+            <PlacedWidget
+              key={placedId(colId, i)}
+              sortId={placedId(colId, i)}
+              colId={colId}
+              index={i}
+              widget={byId[wid]}
+              typeLabel={byId[wid] ? typeLabel(byId[wid].type) : "?"}
+              onRemove={() => onRemoveWidget(i)}
+            />
+          ))}
+        </SortableContext>
       </div>
     </div>
   );
 }
 
 function PlacedWidget({
+  sortId,
   colId,
   index,
   widget,
   typeLabel,
-  canUp,
-  canDown,
-  onMove,
   onRemove,
 }: {
+  sortId: string;
   colId: string;
   index: number;
   widget: WidgetRow | undefined;
   typeLabel: string;
-  canUp: boolean;
-  canDown: boolean;
-  onMove: (i: number, dir: -1 | 1) => void;
   onRemove: () => void;
 }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `placed-${colId}-${index}`,
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: sortId,
     data: { source: "placed", colId, index, widgetId: widget?.id },
   });
+  const style = { transform: CSS.Transform.toString(transform), transition };
+
   return (
-    <div className={`flex items-center gap-1 rounded-lg border border-ink/10 bg-gray-50 p-1.5 ${isDragging ? "opacity-40" : ""}`}>
-      <span ref={setNodeRef} {...listeners} {...attributes} className="flex min-w-0 flex-1 cursor-grab items-center gap-2 active:cursor-grabbing">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-1 rounded-lg border border-ink/10 bg-gray-50 p-1.5 ${isDragging ? "opacity-40" : ""}`}
+    >
+      <span {...listeners} {...attributes} className="flex min-w-0 flex-1 cursor-grab items-center gap-2 touch-none active:cursor-grabbing">
         <BlocksIcon width={14} height={14} className="shrink-0 text-brand" />
         <span className="min-w-0">
           <span className="block truncate text-xs font-medium text-ink">{widget?.name ?? "—"}</span>
           <span className="block text-[9px] uppercase tracking-wide text-ink/40">{typeLabel}</span>
         </span>
       </span>
-      <button type="button" onClick={() => onMove(index, -1)} disabled={!canUp} className="text-ink/30 hover:text-brand disabled:opacity-20">
-        <ChevronDownIcon width={13} height={13} className="rotate-180" />
-      </button>
-      <button type="button" onClick={() => onMove(index, 1)} disabled={!canDown} className="text-ink/30 hover:text-brand disabled:opacity-20">
-        <ChevronDownIcon width={13} height={13} />
-      </button>
       <button type="button" onClick={onRemove} className="text-ink/30 hover:text-red-600">
         <TrashIcon width={13} height={13} />
       </button>

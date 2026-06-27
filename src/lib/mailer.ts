@@ -7,13 +7,24 @@ import type { SmtpSettings } from "./settings";
  * Returns `{ ok: true }` on success, or `{ ok: false, error: string }` with
  * the real error message so the admin UI can display it.
  */
+/** Optional overrides for a single send (e.g. contact notifications). */
+export type SendMailOptions = {
+  /** Override the From header (otherwise the SMTP `fromName`/`fromEmail`). */
+  from?: { name?: string; email: string };
+  /** Reply-To header (e.g. the visitor who submitted a contact form). */
+  replyTo?: string;
+};
+
 export async function sendMail(
   smtp: SmtpSettings,
   to: string,
   subject: string,
   body: string,
+  options?: SendMailOptions,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  if (!smtp.host || !smtp.fromEmail) {
+  // A valid From address must exist — either the override or the SMTP default.
+  const fromEmail = options?.from?.email || smtp.fromEmail;
+  if (!smtp.host || !fromEmail) {
     return { ok: false, error: "SMTP is not configured yet." };
   }
 
@@ -28,9 +39,12 @@ export async function sendMail(
           : undefined,
     });
 
+    const fromName = options?.from?.name ?? smtp.fromName;
+
     await transporter.sendMail({
-      from: `"${smtp.fromName}" <${smtp.fromEmail}>`,
+      from: `"${fromName}" <${fromEmail}>`,
       to,
+      replyTo: options?.replyTo,
       subject,
       text: body,
       html: `<div style="font-family:sans-serif;line-height:1.6">${body.replace(/\n/g, "<br>")}</div>`,

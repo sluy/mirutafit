@@ -18,9 +18,23 @@ const COL_SPAN: Record<number, string> = {
   12: "md:col-span-12",
 };
 
+function isFixed(widget: WidgetInstance): boolean {
+  return (widget.config as { fixed?: boolean })?.fixed === true;
+}
+
+function renderWidget(widget: WidgetInstance) {
+  if (!isWidgetType(widget.type)) return null;
+  const Render = WIDGET_RENDER[widget.type];
+  if (!Render) return null;
+  return <Render config={widget.config} />;
+}
+
 /**
  * Renders a page from its layout (rows -> 12-col grid -> widget instances).
- * Each widget self-manages its own width/padding.
+ *
+ * Widgets whose config has `fixed: true` are lifted out of the grid into a
+ * single pinned top stack, so multiple fixed bars (e.g. a social bar + a navbar)
+ * stack neatly instead of overlapping. Everything else flows in the grid.
  */
 export default function PageRenderer({
   layout,
@@ -29,17 +43,41 @@ export default function PageRenderer({
   layout: PageLayout;
   widgets: Record<string, WidgetInstance>;
 }) {
+  // Collect fixed widgets in document order for the pinned top stack.
+  const pinned: WidgetInstance[] = [];
+  for (const row of layout.rows) {
+    for (const col of row.columns) {
+      for (const wid of col.widgetIds) {
+        const w = widgets[wid];
+        if (w && isFixed(w)) pinned.push(w);
+      }
+    }
+  }
+
   return (
     <>
+      {pinned.length > 0 && (
+        <div className="fixed inset-x-0 top-0 z-50">
+          {pinned.map((w) => (
+            <div key={w.id}>{renderWidget(w)}</div>
+          ))}
+        </div>
+      )}
+
       {layout.rows.map((row) => (
         <section key={row.id} className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {row.columns.map((col) => (
             <div key={col.id} className={COL_SPAN[col.span] ?? "md:col-span-12"}>
               {col.widgetIds.map((wid) => {
-                const widget = widgets[wid];
-                if (!widget || !isWidgetType(widget.type)) return null;
-                const Render = WIDGET_RENDER[widget.type];
-                return <Render key={wid} config={widget.config} />;
+                const w = widgets[wid];
+                // Fixed widgets are rendered in the pinned stack above.
+                if (!w || isFixed(w)) return null;
+                // `id` anchor lets the navbar reference/scroll to this section.
+                return (
+                  <div key={wid} id={`w-${wid}`} className="scroll-mt-24">
+                    {renderWidget(w)}
+                  </div>
+                );
               })}
             </div>
           ))}

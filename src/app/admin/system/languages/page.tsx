@@ -1,11 +1,14 @@
 import { getTranslations } from "next-intl/server";
 import { getEditorData } from "@/lib/translations";
-import { localeNames } from "@/i18n/config";
+import { locales, localeNames } from "@/i18n/config";
+import { getLocaleSettings } from "@/lib/settings";
 import LanguageEditor from "@/components/admin/LanguageEditor";
+import LocaleSettingsForm from "@/components/admin/LocaleSettingsForm";
 
 export default async function AdminLanguagesPage() {
   const t = await getTranslations("admin.languages");
-  const editor = await getEditorData();
+  const [editor, localeSettings] = await Promise.all([getEditorData(), getLocaleSettings()]);
+  const available = locales.map((code) => ({ code, label: localeNames[code] ?? code }));
 
   return (
     <div>
@@ -14,10 +17,9 @@ export default async function AdminLanguagesPage() {
         <p className="mt-1 text-ink/60">{t("subtitle")}</p>
       </header>
 
-      <LanguageEditor
-        editorData={editor}
-        localeNames={localeNames}
-      />
+      <LocaleSettingsForm initial={localeSettings} available={available} />
+
+      <LanguageEditor editorData={editor} localeNames={localeNames} />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { signUp } from "@/lib/auth-client";
 import { Field, inputClass } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -120,6 +121,8 @@ export default function RegisterForm() {
           {loading ? "…" : tr("submit")}
         </button>
       </form>
+
+      <SocialLoginButtons />
 
       <p className="mt-6 text-center text-sm text-ink/60">
         {tr("haveAccount")}{" "}

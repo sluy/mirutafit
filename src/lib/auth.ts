@@ -4,7 +4,17 @@ import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { APIError } from "better-auth/api";
 import { prisma } from "./prisma";
-import { getRegistrationEnabled } from "./settings";
+import { getRegistrationEnabled, getOauthSettings } from "./settings";
+import { detectRequestLocale } from "./locale";
+
+// Provider credentials are read once at startup (better-auth builds the config
+// statically). Changing them in the admin requires a server restart. The DB
+// read is wrapped so a missing DB at boot never breaks auth.
+const oauth = await getOauthSettings();
+const socialProviders =
+  oauth.googleClientId && oauth.googleClientSecret
+    ? { google: { clientId: oauth.googleClientId, clientSecret: oauth.googleClientSecret } }
+    : {};
 
 // Emails that must always be admins (e.g. the project owner).
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
@@ -24,12 +34,14 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
 
-  // For now: only email + password. Google/Facebook get added later as
-  // socialProviders without touching the rest of the setup.
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
   },
+
+  // Social login (admin-configurable). Currently Google; Facebook can be added
+  // the same way. Configured from the DB at startup (see above).
+  socialProviders,
 
   // Optional profile data. These map to the columns in prisma/schema.prisma.
   user: {
@@ -38,6 +50,8 @@ export const auth = betterAuth({
       lastName: { type: "string", required: false, input: true },
       country: { type: "string", required: false, input: true },
       phone: { type: "string", required: false, input: true },
+      // Set automatically at signup (not user-supplied).
+      language: { type: "string", required: false, input: false },
     },
   },
 
@@ -55,8 +69,11 @@ export const auth = betterAuth({
               message: "Registration is currently disabled",
             });
           }
-          if (forced) return { data: { ...user, role: "admin" } };
-          return { data: user };
+          // Stamp the account with the locale active at signup time.
+          const language = await detectRequestLocale();
+          const data = { ...user, language };
+          if (forced) return { data: { ...data, role: "admin" } };
+          return { data };
         },
       },
     },

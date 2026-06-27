@@ -61,6 +61,9 @@ Copy `.env.example` to `.env` first. The owner emails
 - [Auth & roles](docs/auth.md) — incl. password recovery + verification codes
 - [Media & uploads](docs/media.md)
 - [Widgets, layouts & pages](docs/widgets.md) — the page builder
+- [Articles module](docs/articles.md) — articles, taxonomies, public pages, widget
+- [Contact module](docs/contact.md) — contact widget, inbox, notifications
+- [Community module](docs/community.md) — comment wall widget + moderation
 - [Internationalization](docs/i18n.md)
 - [Deployment (EasyPanel)](docs/deployment.md)
 - [Conventions](docs/conventions.md)

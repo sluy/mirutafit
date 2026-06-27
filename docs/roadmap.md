@@ -45,17 +45,55 @@ Tracks what's done and what's next. Update as milestones land.
       reusable WYSIWYG (`RichTextEditor`, Tiptap) for html, text editor for
       text/json/svg.
 
+- [x] **Articles module** — all six phases (see [articles.md](articles.md)):
+      shared taxonomies (categories/tags) + admin CRUD; article CRUD with a
+      Word-like Tiptap editor (tables/images/video from the Media library);
+      public `/articles` listing (search/category/tags/order/pagination) +
+      `/articles/[date]/[slug]` detail with SEO; an `articles` page-builder widget
+      (latest/first/manual, category filter, columns); and a dynamic navbar
+      category menu (`menuCategories`).
+
+- [x] **Community module** — see [community.md](community.md): a `community`
+      page-builder widget (approved comment wall + submission form with honeypot)
+      backed by a `Comment` table; admin moderation at `/admin/community/comments`
+      (approve / hide / delete, seed comments, pre/post-moderation toggle).
+
+- [x] **Donations widget** — a configurable "support me" banner for the page
+      builder (`donations` widget): dark section + copyable payment methods, each
+      with name/detail/badge color and an optional link (turns "Copy" into a
+      "Donate" link). Methods are managed from the widget editor in the admin.
+
+- [x] **Contact module** — see [contact.md](contact.md): a configurable Contact
+      **widget** (banner + form, person/sponsor modes) for the page builder;
+      public submissions saved to a `ContactMessage` table with a honeypot;
+      admin inbox (`/admin/contact/messages`) with read/unread + delete; and
+      admin-configurable recipient + sender emails (`/admin/contact/settings`),
+      notifications sent via the SMTP account with Reply-To set to the visitor.
+
+- [x] **Configurable i18n + language switcher** — see [i18n.md](i18n.md): admin
+      locale settings (single vs. multi, enabled languages, default), per-request
+      resolution (cookie → account language → browser → fallback), `User.language`
+      stamped at signup, and a navbar **language switcher** item. Plus a **go-top**
+      floating-button widget and a fix for navbar widget-anchor scrolling.
+- [x] **Translatable widget/navbar content** — `LocalizedText` fields + per-locale
+      language tabs in every widget editor; renders resolve to the active locale
+      (see [i18n.md](i18n.md)). Admin-authored content is now bilingual, not just
+      the next-intl chrome.
+
+- [x] **Google OAuth (admin-configurable)** — `socialProviders.google` in better-auth,
+      credentials stored in the DB (`oauth` setting, secret kept like SMTP) and an
+      enable toggle + Client ID/Secret form under **Users → Settings**. "Continue
+      with Google" button on login/register (gated live). Credentials are read at
+      startup (changing them needs a restart). Facebook can be added the same way.
+
 ## Next
 
+- [ ] **Facebook OAuth** — same pattern as Google (add `facebook` provider + admin fields).
 - [ ] **Static video thumbnails** (ffmpeg) + HTTP range requests for video.
-- [ ] **Migrate marketing copy into i18n** — homepage components still have
-      hard-coded Spanish; move strings into `src/messages/`.
-- [ ] **Language switcher** UI (writes the `NEXT_LOCALE` cookie).
+- [ ] **Migrate marketing copy into i18n** — the legacy homepage fallback
+      (`src/components/*`) still has hard-coded Spanish; move strings into
+      `src/messages/` (low priority — the real site is widget-composed).
 - [ ] **OAuth**: add Google / Facebook providers to better-auth.
-- [ ] **Avatar upload** (currently just a URL field).
-- [ ] **Content models**: posts/blog, community comments (incl. admin-seeded
-      comments), contact-message inbox — back them with real tables + admin CRUD.
-- [ ] **Donations**: make the methods configurable from the admin panel.
 
 ## Notes / gotchas
 

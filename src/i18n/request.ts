@@ -1,24 +1,24 @@
 import { getRequestConfig } from "next-intl/server";
-import { cookies, headers } from "next/headers";
-import { defaultLocale, isLocale, LOCALE_COOKIE, type Locale } from "./config";
+import { headers } from "next/headers";
 import { buildMessages } from "@/lib/translations";
+import { detectRequestLocale } from "@/lib/locale";
+import { auth } from "@/lib/auth";
 
-// Decide the language for the current request:
-// 1. A manual choice saved in the NEXT_LOCALE cookie wins.
-// 2. Otherwise we sniff the Accept-Language header: Spanish -> "es",
-//    anything else falls back to English (the base language).
-async function resolveLocale(): Promise<Locale> {
-  const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
-  if (isLocale(cookieLocale)) return cookieLocale;
-
-  const acceptLanguage = (await headers()).get("accept-language") ?? "";
-  if (acceptLanguage.toLowerCase().includes("es")) return "es";
-
-  return defaultLocale;
+// The signed-in account's saved language (used as a detection signal).
+async function getAccountLanguage(): Promise<string | null> {
+  // Read headers() OUTSIDE the try so its "dynamic rendering" signal propagates
+  // (locale-aware pages must render per-request, not be prerendered at build).
+  const h = await headers();
+  try {
+    const session = await auth.api.getSession({ headers: h });
+    return (session?.user as { language?: string | null } | undefined)?.language ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export default getRequestConfig(async () => {
-  const locale = await resolveLocale();
+  const locale = await detectRequestLocale(await getAccountLanguage());
   return {
     locale,
     // Base messages with any admin overrides applied.

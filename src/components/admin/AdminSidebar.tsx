@@ -19,6 +19,9 @@ import {
   MenuIcon,
   CloseIcon,
   BlocksIcon,
+  FileIcon,
+  MailIcon,
+  QuoteIcon,
 } from "@/components/icons";
 
 type Leaf = { href: string; key: string; exact?: boolean; tkey?: string };
@@ -28,7 +31,16 @@ type Item =
 
 const nav: Item[] = [
   { type: "link", href: "/admin", key: "dashboard", Icon: GridIcon, exact: true },
-  { type: "link", href: "/admin/media", key: "media", Icon: ImageIcon, exact: false },
+  {
+    type: "group",
+    key: "site",
+    Icon: GlobeIcon,
+    children: [
+      { href: "/admin/site/layout", key: "siteLayout" },
+      { href: "/admin/site/general", key: "siteGeneral" },
+      { href: "/admin/site/social", key: "siteSocial" },
+    ],
+  },
   {
     type: "group",
     key: "widgets",
@@ -39,15 +51,32 @@ const nav: Item[] = [
       tkey: `widgets.types.${k}`,
     })),
   },
+  { type: "link", href: "/admin/media", key: "media", Icon: ImageIcon, exact: false },
   {
     type: "group",
-    key: "site",
-    Icon: GlobeIcon,
+    key: "content",
+    Icon: FileIcon,
     children: [
-      { href: "/admin/site/layout", key: "siteLayout" },
-      { href: "/admin/site/general", key: "siteGeneral" },
-      { href: "/admin/site/social", key: "siteSocial" },
+      { href: "/admin/content/articles", key: "contentArticles" },
+      { href: "/admin/content/categories", key: "contentCategories" },
+      { href: "/admin/content/tags", key: "contentTags" },
     ],
+  },
+  {
+    type: "group",
+    key: "contact",
+    Icon: MailIcon,
+    children: [
+      { href: "/admin/contact/messages", key: "contactMessages" },
+      { href: "/admin/contact/settings", key: "contactSettings" },
+    ],
+  },
+  {
+    type: "link",
+    href: "/admin/community/comments",
+    key: "community",
+    Icon: QuoteIcon,
+    exact: false,
   },
   {
     type: "group",

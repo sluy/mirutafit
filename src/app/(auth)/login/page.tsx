@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { signIn } from "@/lib/auth-client";
 import { Field, inputClass } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -104,6 +105,8 @@ export default function LoginPage() {
           {loading ? "…" : tl("submit")}
         </button>
       </form>
+
+      <SocialLoginButtons />
 
       <p className="mt-6 text-center text-sm text-ink/60">
         {tl("noAccount")}{" "}
