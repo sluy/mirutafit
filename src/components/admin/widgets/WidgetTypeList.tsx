@@ -91,7 +91,7 @@ export default function WidgetTypeList({
         </div>
       )}
 
-      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title={`${t("new")} · ${t(`types.${type}`)}`}>
+      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title={`${t("new")} · ${t(`types.${type}`)}`} onSubmit={create}>
         <div className="space-y-4">
           <div>
             <label htmlFor="widget-name" className="mb-1.5 block text-sm font-medium text-ink/70">{t("name")}</label>

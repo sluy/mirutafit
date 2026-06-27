@@ -23,12 +23,20 @@ export default function Dialog({
   title,
   children,
   maxWidth = "max-w-md",
+  onSubmit,
 }: {
   open: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
   maxWidth?: string;
+  /**
+   * The dialog's primary "accept" action. When set, pressing **Enter** while
+   * focused in a text `<input>` triggers it (Enter inside a `<textarea>` still
+   * inserts a newline). Avoids a `<form>` wrapper so interior buttons keep their
+   * normal behavior.
+   */
+  onSubmit?: () => void;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -58,6 +66,17 @@ export default function Dialog({
       <div
         role="dialog"
         aria-modal="true"
+        onKeyDown={(e) => {
+          if (
+            onSubmit &&
+            e.key === "Enter" &&
+            !e.shiftKey &&
+            (e.target as HTMLElement).tagName === "INPUT"
+          ) {
+            e.preventDefault();
+            onSubmit();
+          }
+        }}
         className={`animate-dialog-in relative z-[1] my-auto w-full ${maxWidth} rounded-2xl border border-ink/5 bg-white shadow-2xl`}
       >
         <div className="p-6 sm:p-7">

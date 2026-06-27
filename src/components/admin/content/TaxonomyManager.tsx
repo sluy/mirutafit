@@ -187,7 +187,7 @@ function CreateDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} title={t("new")}>
+    <Dialog open={open} onClose={onClose} title={t("new")} onSubmit={create}>
       <div className="space-y-4">
         {locales.map((l) => (
           <label key={l} className="block">

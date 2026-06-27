@@ -438,7 +438,8 @@
         "pickWidget": "Choose a widget…",
         "categoriesNote": "Expands the categories selected below.",
         "type_language": "Language",
-        "languageNote": "Shows the language switcher (needs more than one enabled language)."
+        "languageNote": "Shows the language switcher (needs more than one enabled language).",
+        "addTo": "Add to"
       },
       "socialBar": {
         "mode": "Mode",

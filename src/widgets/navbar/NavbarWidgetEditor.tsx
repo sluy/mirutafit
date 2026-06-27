@@ -55,10 +55,6 @@ const defaultItems = (): NavItem[] => [
   { id: crypto.randomUUID(), type: "support", zone: "right", style: "button", label: "", url: "#apoyo", widgetId: "" },
 ];
 
-const ADD_ZONE: Record<NavItemType, NavZone> = {
-  home: "left", link: "left", widget: "center", categories: "center", language: "right", auth: "right", support: "right",
-};
-
 export default function NavbarWidgetEditor({ config, onChange }: WidgetEditorProps<NavbarConfig>) {
   const t = useTranslations("admin.widgets.navbar");
   const set = (patch: Partial<NavbarConfig>) => onChange({ ...config, ...patch });
@@ -80,11 +76,12 @@ export default function NavbarWidgetEditor({ config, onChange }: WidgetEditorPro
   const updateItem = (id: string, patch: Partial<NavItem>) =>
     setItems(items.map((i) => (i.id === id ? { ...i, ...patch } : i)));
   const removeItem = (id: string) => setItems(items.filter((i) => i.id !== id));
-  const addItem = (type: NavItemType) =>
+  const addItem = (type: NavItemType, zone: NavZone) =>
     setItems([
       ...items,
-      { id: crypto.randomUUID(), type, zone: ADD_ZONE[type], style: type === "support" ? "button" : "text", label: "", url: type === "support" ? "#apoyo" : "", widgetId: "" },
+      { id: crypto.randomUUID(), type, zone, style: type === "support" ? "button" : "text", label: "", url: type === "support" ? "#apoyo" : "", widgetId: "" },
     ]);
+  const zoneLabels: Record<NavZone, string> = { left: t("zone_left"), center: t("zone_center"), right: t("zone_right") };
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
   const onDragEnd = (e: DragEndEvent) => {
@@ -199,7 +196,7 @@ export default function NavbarWidgetEditor({ config, onChange }: WidgetEditorPro
 
         <div className="mb-3 flex flex-wrap gap-1.5">
           {ADDABLE.map((type) => (
-            <button key={type} type="button" onClick={() => addItem(type)} className="rounded-full border border-ink/10 px-3 py-1 text-xs font-medium text-ink/60 hover:border-brand hover:text-brand">+ {t(`type_${type}`)}</button>
+            <AddControl key={type} label={t(`type_${type}`)} addLabel={t("addTo")} zoneLabels={zoneLabels} onAdd={(zone) => addItem(type, zone)} />
           ))}
         </div>
 
@@ -237,6 +234,50 @@ export default function NavbarWidgetEditor({ config, onChange }: WidgetEditorPro
         )}
         <p className="mt-1 text-xs text-ink/40">{t("menuCategoriesHint")}</p>
       </div>
+    </div>
+  );
+}
+
+function AddControl({
+  label,
+  addLabel,
+  zoneLabels,
+  onAdd,
+}: {
+  label: string;
+  addLabel: string;
+  zoneLabels: Record<NavZone, string>;
+  onAdd: (zone: NavZone) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const zones: NavZone[] = ["left", "center", "right"];
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${open ? "border-brand text-brand" : "border-ink/10 text-ink/60 hover:border-brand hover:text-brand"}`}
+      >
+        + {label}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 z-20 mt-1 w-36 overflow-hidden rounded-xl border border-ink/10 bg-white shadow-xl">
+            <p className="border-b border-ink/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-ink/40">{addLabel}</p>
+            {zones.map((z) => (
+              <button
+                key={z}
+                type="button"
+                onClick={() => { onAdd(z); setOpen(false); }}
+                className="block w-full px-3 py-2 text-left text-xs text-ink/70 transition-colors hover:bg-brand/10 hover:text-brand"
+              >
+                {zoneLabels[z]}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

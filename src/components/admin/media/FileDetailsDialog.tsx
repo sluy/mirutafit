@@ -102,7 +102,7 @@ export default function FileDetailsDialog({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} title={t("details")} maxWidth="max-w-2xl">
+      <Dialog open={open} onClose={onClose} title={t("details")} maxWidth="max-w-2xl" onSubmit={saveName}>
         <div className="space-y-6">
           {/* Preview + info */}
           <div className="grid gap-6 sm:grid-cols-[1.1fr_1fr]">

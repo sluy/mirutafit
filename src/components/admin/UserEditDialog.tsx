@@ -98,7 +98,7 @@ export default function UserEditDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} title={t("editProfileTitle")} maxWidth="max-w-lg">
+    <Dialog open={open} onClose={onClose} title={t("editProfileTitle")} maxWidth="max-w-lg" onSubmit={save}>
       <div className="space-y-5">
         {/* Avatar */}
         <div className="flex items-center gap-4">
