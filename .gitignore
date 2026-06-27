@@ -59,5 +59,4 @@ next-env.d.ts
 /src/generated/prisma
 
 # media storage (persistent volumes in prod)
-/storage
-/public/uploads
+
