@@ -64,6 +64,7 @@ Copy `.env.example` to `.env` first. The owner emails
 - [Articles module](docs/articles.md) — articles, taxonomies, public pages, widget
 - [Contact module](docs/contact.md) — contact widget, inbox, notifications
 - [Community module](docs/community.md) — comment wall widget + moderation
+- [Surveys module](docs/surveys.md) — form builder, public forms, maintenance mode
 - [Internationalization](docs/i18n.md)
 - [Deployment (EasyPanel)](docs/deployment.md)
 - [Conventions](docs/conventions.md)

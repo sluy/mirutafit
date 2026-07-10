@@ -258,6 +258,68 @@ model ContactMessage {
   @@map("contact_message")
 }
 
+/// A survey/form the admin builds and publishes at /encuestas/<slug>.
+/// Questions are grouped by their `section` label; responses are collected as
+/// SurveyResponse + SurveyAnswer rows. See docs/surveys.md.
+model Survey {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String   @default("") // intro shown above the form
+  disclaimer  String   @default("") // optional highlighted warning box
+  submitText  String   @default("") // thank-you message after submitting
+  status      String   @default("draft") // "draft" | "open" | "closed"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions SurveyQuestion[]
+  responses SurveyResponse[]
+
+  @@map("survey")
+}
+
+model SurveyQuestion {
+  id       String  @id @default(cuid())
+  surveyId String
+  survey   Survey  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  section  String  @default("") // section heading this question belongs to
+  type     String // short_text | long_text | single_choice | multiple_choice | scale | number
+  label    String
+  help     String  @default("") // helper / example text
+  required Boolean @default(false)
+  options  Json    @default("{}") // choices[] for choice types; {min,max,minLabel,maxLabel} for scale
+  order    Int     @default(0)
+
+  answers SurveyAnswer[]
+
+  @@index([surveyId])
+  @@map("survey_question")
+}
+
+model SurveyResponse {
+  id        String   @id @default(cuid())
+  surveyId  String
+  survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  answers SurveyAnswer[]
+
+  @@index([surveyId])
+  @@map("survey_response")
+}
+
+model SurveyAnswer {
+  id         String         @id @default(cuid())
+  responseId String
+  response   SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  questionId String
+  question   SurveyQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value      String         @default("") // free text / choice / scale; multiple_choice = JSON array
+
+  @@index([responseId])
+  @@map("survey_answer")
+}
+
 /// A public community comment / testimonial. Visitor-submitted comments start
 /// as `pending` and only appear on the wall once `approved` (unless auto-approve
 /// is on). `source` distinguishes visitor comments from admin-seeded ones.

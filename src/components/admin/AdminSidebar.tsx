@@ -22,6 +22,7 @@ import {
   FileIcon,
   MailIcon,
   QuoteIcon,
+  ClipboardListIcon,
 } from "@/components/icons";
 
 type Leaf = { href: string; key: string; exact?: boolean; tkey?: string };
@@ -79,6 +80,13 @@ const nav: Item[] = [
     exact: false,
   },
   {
+    type: "link",
+    href: "/admin/surveys",
+    key: "surveys",
+    Icon: ClipboardListIcon,
+    exact: false,
+  },
+  {
     type: "group",
     key: "users",
     Icon: UsersIcon,
@@ -95,6 +103,7 @@ const nav: Item[] = [
       { href: "/admin/system/email", key: "systemEmail" },
       { href: "/admin/system/codes", key: "systemCodes" },
       { href: "/admin/system/languages", key: "systemLanguages" },
+      { href: "/admin/system/maintenance", key: "systemMaintenance" },
     ],
   },
 ];

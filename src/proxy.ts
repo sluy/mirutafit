@@ -6,16 +6,23 @@ import { getSessionCookie } from "better-auth/cookies";
 // so the redirect is a clean 307. Full authorization (admin role, ban status)
 // is still enforced server-side in the route layouts.
 export function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
+  const { pathname } = request.nextUrl;
 
-  if (!sessionCookie) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  // Optimistic auth gate for private areas (full checks run in the layouts).
+  if (pathname.startsWith("/admin") || pathname.startsWith("/account")) {
+    if (!getSessionCookie(request)) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
-  return NextResponse.next();
+  // Expose the current path to server components (used by the maintenance gate
+  // in the root layout — Next doesn't surface the pathname to RSC otherwise).
+  const headers = new Headers(request.headers);
+  headers.set("x-pathname", pathname);
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/account", "/account/:path*"],
+  // Run on all pages (to set x-pathname) except static assets.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

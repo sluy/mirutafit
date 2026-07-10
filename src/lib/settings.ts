@@ -268,6 +268,42 @@ export async function saveCommunitySettings(input: CommunitySettings): Promise<v
   });
 }
 
+// ── Maintenance mode ──────────────────────────────────────────
+// When enabled, non-admins see a maintenance screen instead of the site
+// (surveys under /encuestas stay accessible). Stored under key "maintenance".
+
+export type MaintenanceSettings = {
+  enabled: boolean;
+  title: string;
+  message: string;
+};
+
+export const MAINTENANCE_KEY = "maintenance";
+
+export const defaultMaintenanceSettings: MaintenanceSettings = {
+  enabled: false,
+  title: "Estamos en mantenimiento",
+  message: "Volvemos pronto. Gracias por tu paciencia. 💚",
+};
+
+export async function getMaintenanceSettings(): Promise<MaintenanceSettings> {
+  try {
+    const row = await prisma.systemSetting.findUnique({ where: { key: MAINTENANCE_KEY } });
+    if (!row) return defaultMaintenanceSettings;
+    return { ...defaultMaintenanceSettings, ...(row.value as Partial<MaintenanceSettings>) };
+  } catch {
+    return defaultMaintenanceSettings;
+  }
+}
+
+export async function saveMaintenanceSettings(input: MaintenanceSettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: MAINTENANCE_KEY },
+    create: { key: MAINTENANCE_KEY, value: input },
+    update: { value: input },
+  });
+}
+
 // ── OAuth / social login ──────────────────────────────────────
 // Google credentials + enable flag, stored under key "oauth". The secret is
 // sensitive (treated like the SMTP password — never echoed back to the client).

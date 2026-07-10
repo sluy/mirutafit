@@ -80,6 +80,14 @@ Tracks what's done and what's next. Update as milestones land.
       (see [i18n.md](i18n.md)). Admin-authored content is now bilingual, not just
       the next-intl chrome.
 
+- [x] **Surveys module** — see [surveys.md](surveys.md): admin-built forms
+      (`Survey`/`SurveyQuestion`/`SurveyResponse`/`SurveyAnswer`), a question
+      builder + response inbox in the admin, and public forms at
+      `/encuestas/<slug>` (short/long text, single/multiple choice, 1–N scale,
+      number). Seeded the "Formulario de Admisión Inicial".
+- [x] **Maintenance mode** — admin toggle + editable message; non-admins see a
+      maintenance screen (surveys + auth/admin stay reachable), gated in the root
+      layout via an `x-pathname` header from the proxy.
 - [x] **Google OAuth (admin-configurable)** — `socialProviders.google` in better-auth,
       credentials stored in the DB (`oauth` setting, secret kept like SMTP) and an
       enable toggle + Client ID/Secret form under **Users → Settings**. "Continue
