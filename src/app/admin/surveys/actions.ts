@@ -6,7 +6,10 @@ import {
   createSurvey,
   saveSurvey,
   deleteSurvey,
+  exportSurvey,
+  importSurvey,
   type SurveyEditData,
+  type SurveyExportData,
 } from "@/lib/surveys";
 
 export async function createSurveyAction(): Promise<{ id: string }> {
@@ -34,3 +37,22 @@ export async function deleteSurveyAction(id: string): Promise<{ ok: boolean }> {
   revalidatePath("/admin/surveys");
   return { ok: true };
 }
+
+export async function exportSurveyAction(
+  id: string,
+): Promise<{ ok: boolean; data?: SurveyExportData; error?: string }> {
+  await requireAdmin();
+  const data = await exportSurvey(id);
+  if (!data) return { ok: false, error: "not_found" };
+  return { ok: true, data };
+}
+
+export async function importSurveyAction(
+  data: SurveyExportData,
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  await requireAdmin();
+  const res = await importSurvey(data);
+  if (res.ok) revalidatePath("/admin/surveys");
+  return res;
+}
+

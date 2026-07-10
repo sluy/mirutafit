@@ -875,7 +875,13 @@
       "qtype_number": "Número",
       "backToSurvey": "Volver a la encuesta",
       "responsesCount": "{count, plural, =0 {Sin respuestas} one {# respuesta} other {# respuestas}}",
-      "noResponses": "Aún no hay respuestas."
+      "noResponses": "Aún no hay respuestas.",
+      "export": "Exportar",
+      "exported": "Encuesta exportada",
+      "import": "Importar",
+      "imported": "Encuesta importada como borrador",
+      "importBadFormat": "Formato de archivo inválido. Usa un JSON de encuesta de MiRutaFit.",
+      "copyLink": "Copiar enlace"
     },
     "maintenance": {
       "title": "Modo mantenimiento",

@@ -37,6 +37,21 @@ scale with end labels, etc.), validates required fields, submits via
 `submitSurveyAction`, and shows the thank-you message. Drafts/closed → 404.
 Marked `noindex`. **Surveys stay reachable in maintenance mode** (see below).
 
+## Export / Import
+
+Surveys can be transferred between environments (e.g. local → production) via
+JSON files using the portable `mirutafit-survey-v1` format.
+
+- **Export** — click the download icon next to any survey in the list. This
+  calls `exportSurveyAction`, which serializes the survey metadata + questions
+  (no internal IDs, no responses) and triggers a client-side `.json` download.
+- **Import** — click **"Import"** at the top of the survey list and select a
+  `.json` file. The client validates the `_format` field, then calls
+  `importSurveyAction`, which creates a new survey in **draft** status with
+  fresh IDs. If the slug already exists, a random suffix is appended.
+
+Data lives in `exportSurvey()` / `importSurvey()` in `src/lib/surveys.ts`.
+
 ## Maintenance mode
 
 `getMaintenanceSettings()` (`maintenance` setting: `enabled`, `title`, `message`),

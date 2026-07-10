@@ -10,6 +10,7 @@ import {
   type SurveyListItem,
   type PublicSurvey,
   type ResponseRow,
+  type SurveyExportData,
 } from "./surveys-shared";
 import { Prisma } from "@/generated/prisma/client";
 
@@ -23,6 +24,7 @@ export {
   type SurveyListItem,
   type PublicSurvey,
   type ResponseRow,
+  type SurveyExportData,
 } from "./surveys-shared";
 
 function toQuestion(q: {
@@ -142,6 +144,79 @@ export async function saveSurvey(
 
 export async function deleteSurvey(id: string): Promise<void> {
   await prisma.survey.delete({ where: { id } });
+}
+
+// ── Export / Import ───────────────────────────────────────────
+
+export async function exportSurvey(id: string): Promise<SurveyExportData | null> {
+  const s = await prisma.survey.findUnique({
+    where: { id },
+    include: { questions: { orderBy: { order: "asc" } } },
+  });
+  if (!s) return null;
+  return {
+    _format: "mirutafit-survey-v1",
+    slug: s.slug,
+    title: s.title,
+    description: s.description,
+    disclaimer: s.disclaimer,
+    submitText: s.submitText,
+    status: s.status,
+    questions: s.questions.map((q) => ({
+      section: q.section,
+      type: (QUESTION_TYPES.includes(q.type as QuestionType) ? q.type : "short_text") as QuestionType,
+      label: q.label,
+      help: q.help,
+      required: q.required,
+      options: (q.options as QuestionOptions) ?? {},
+      order: q.order,
+    })),
+  };
+}
+
+export async function importSurvey(
+  data: SurveyExportData,
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  if (data._format !== "mirutafit-survey-v1") {
+    return { ok: false, error: "format" };
+  }
+  if (!data.title?.trim()) {
+    return { ok: false, error: "title" };
+  }
+
+  // Find a unique slug — append a suffix if it already exists.
+  let slug = slugify(data.slug || data.title).slice(0, 80);
+  const existing = await prisma.survey.findUnique({ where: { slug } });
+  if (existing) {
+    slug = `${slug}-${randomUUID().slice(0, 6)}`;
+  }
+
+  try {
+    const survey = await prisma.survey.create({
+      data: {
+        slug,
+        title: data.title.trim(),
+        description: data.description ?? "",
+        disclaimer: data.disclaimer ?? "",
+        submitText: data.submitText ?? "",
+        status: "draft", // always import as draft for safety
+        questions: {
+          create: (data.questions ?? []).map((q, i) => ({
+            section: q.section ?? "",
+            type: (QUESTION_TYPES.includes(q.type as QuestionType) ? q.type : "short_text") as string,
+            label: q.label ?? "",
+            help: q.help ?? "",
+            required: q.required ?? false,
+            options: (q.options ?? {}) as Prisma.InputJsonValue,
+            order: q.order ?? i,
+          })),
+        },
+      },
+    });
+    return { ok: true, id: survey.id };
+  } catch {
+    return { ok: false, error: "generic" };
+  }
 }
 
 // ── Public ────────────────────────────────────────────────────

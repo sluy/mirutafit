@@ -875,7 +875,13 @@
       "qtype_number": "Number",
       "backToSurvey": "Back to survey",
       "responsesCount": "{count, plural, =0 {No responses} one {# response} other {# responses}}",
-      "noResponses": "No responses yet."
+      "noResponses": "No responses yet.",
+      "export": "Export",
+      "exported": "Survey exported",
+      "import": "Import",
+      "imported": "Survey imported as draft",
+      "importBadFormat": "Invalid file format. Please use a MiRutaFit survey JSON.",
+      "copyLink": "Copy link"
     },
     "maintenance": {
       "title": "Maintenance mode",

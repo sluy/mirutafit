@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { TrashIcon, ExternalLinkIcon, LinkIcon } from "@/components/icons";
-import type { SurveyListItem } from "@/lib/surveys-shared";
-import { createSurveyAction, deleteSurveyAction } from "@/app/admin/surveys/actions";
+import { TrashIcon, ExternalLinkIcon, LinkIcon, DownloadIcon, UploadIcon } from "@/components/icons";
+import type { SurveyListItem, SurveyExportData } from "@/lib/surveys-shared";
+import {
+  createSurveyAction,
+  deleteSurveyAction,
+  exportSurveyAction,
+  importSurveyAction,
+} from "@/app/admin/surveys/actions";
 
 const STATUS_STYLE: Record<string, string> = {
   open: "bg-emerald-100 text-emerald-700",
@@ -19,6 +24,7 @@ export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) 
   const t = useTranslations("admin.surveys");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const importRef = useRef<HTMLInputElement>(null);
 
   const create = async () => {
     setBusy(true);
@@ -44,9 +50,71 @@ export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) 
     } else toast.error(t("error"));
   };
 
+  const exportSurvey = async (id: string, title: string) => {
+    const res = await exportSurveyAction(id);
+    if (!res.ok || !res.data) {
+      toast.error(t("error"));
+      return;
+    }
+    const json = JSON.stringify(res.data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${res.data.slug || title}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(t("exported"));
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Reset input so the same file can be selected again
+    e.target.value = "";
+
+    try {
+      const text = await file.text();
+      const data: SurveyExportData = JSON.parse(text);
+
+      if (data._format !== "mirutafit-survey-v1") {
+        toast.error(t("importBadFormat"));
+        return;
+      }
+
+      const res = await importSurveyAction(data);
+      if (res.ok && res.id) {
+        toast.success(t("imported"));
+        router.refresh();
+      } else {
+        toast.error(t("error"));
+      }
+    } catch {
+      toast.error(t("importBadFormat"));
+    }
+  };
+
   return (
     <div>
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex justify-end gap-2">
+        {/* Hidden file input for import */}
+        <input
+          ref={importRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={handleImport}
+        />
+        <button
+          type="button"
+          onClick={() => importRef.current?.click()}
+          className="flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-4 py-2.5 text-sm font-semibold text-ink/70 shadow-sm transition-all hover:border-brand/30 hover:text-brand"
+        >
+          <UploadIcon width={15} height={15} />
+          {t("import")}
+        </button>
         <button
           type="button"
           onClick={create}
@@ -95,6 +163,9 @@ export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) 
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1">
+                      <button type="button" onClick={() => exportSurvey(s.id, s.title)} className="grid h-8 w-8 place-items-center rounded-lg text-ink/30 hover:bg-brand/10 hover:text-brand" title={t("export")}>
+                        <DownloadIcon width={15} height={15} />
+                      </button>
                       <button type="button" onClick={() => copyLink(s.slug)} className="grid h-8 w-8 place-items-center rounded-lg text-ink/30 hover:bg-brand/10 hover:text-brand" title={t("copyLink")}>
                         <LinkIcon width={15} height={15} />
                       </button>

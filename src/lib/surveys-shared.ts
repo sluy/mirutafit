@@ -73,3 +73,23 @@ export type ResponseRow = {
   createdAt: string;
   values: Record<string, string>; // questionId -> value
 };
+
+/** Portable format for survey import/export (no internal IDs). */
+export type SurveyExportData = {
+  _format: "mirutafit-survey-v1";
+  slug: string;
+  title: string;
+  description: string;
+  disclaimer: string;
+  submitText: string;
+  status: string;
+  questions: {
+    section: string;
+    type: QuestionType;
+    label: string;
+    help: string;
+    required: boolean;
+    options: QuestionOptions;
+    order: number;
+  }[];
+};
