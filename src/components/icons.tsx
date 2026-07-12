@@ -241,6 +241,15 @@ export function ClipboardListIcon(props: IconProps) {
   );
 }
 
+export function CodeIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  );
+}
+
 export function FolderIcon(props: IconProps) {
   return (
     <svg {...base(props)} fill="currentColor" stroke="none">

@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { inputClass } from "@/components/ui/Field";
 import { ArrowRightIcon, TrashIcon } from "@/components/icons";
-import { slugify } from "@/lib/slug";
+import { slugify, liveSlugify } from "@/lib/slug";
 import {
   QUESTION_TYPES,
   type QuestionType,
@@ -109,7 +109,7 @@ export default function SurveyEditor({ survey }: { survey: SurveyEditData }) {
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-ink/70">{t("fieldSlug")}</label>
-          <input value={data.slug} onChange={(e) => { setSlugTouched(true); set({ slug: slugify(e.target.value) }); }} className={`${inputClass()} font-mono`} />
+          <input value={data.slug} onChange={(e) => { setSlugTouched(true); set({ slug: liveSlugify(e.target.value) }); }} className={`${inputClass()} font-mono`} />
           <p className="mt-1 text-xs text-ink/40">/encuestas/{data.slug || "…"}</p>
         </div>
         <div>

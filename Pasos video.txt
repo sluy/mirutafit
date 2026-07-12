@@ -1,0 +1,13 @@
+
+PASO 1 - Arreglar video raw (antes de cortar silencios):
+ffmpeg -i "video_original.mp4" -r 30 -c:v libx264 -preset fast -c:a copy videofix.mp4
+
+PASO 2 - Cortar silencios con Auto-Editor:
+C:\Users\sluy1\AppData\Local\Python\pythoncore-3.14-64\python.exe -m auto_editor "videofix.mp4" --margin 0.3sec --edit audio:threshold=4%
+
+PASO 3 - Editar en CapCut (efectos, texto, subtitulos)
+
+PASO 4 - Hacer compatible el video exportado de CapCut antes de pasarlo al telefono:
+ffmpeg -i "export_capcut.mp4" -c:v libx264 -profile:v main -pix_fmt yuv420p -r 30 -g 60 -c:a aac -b:a 128k video_final.mp4
+
+Nota: cambiar el nombre del archivo entre comillas por el nombre real del video en cada paso.

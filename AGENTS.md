@@ -65,6 +65,7 @@ Copy `.env.example` to `.env` first. The owner emails
 - [Contact module](docs/contact.md) — contact widget, inbox, notifications
 - [Community module](docs/community.md) — comment wall widget + moderation
 - [Surveys module](docs/surveys.md) — form builder, public forms, maintenance mode
+- [Static pages](docs/static-pages.md) — standalone raw-HTML pages at /static/&lt;slug&gt;
 - [Internationalization](docs/i18n.md)
 - [Deployment (EasyPanel)](docs/deployment.md)
 - [Conventions](docs/conventions.md)

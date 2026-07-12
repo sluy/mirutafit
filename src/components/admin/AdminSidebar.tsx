@@ -23,6 +23,7 @@ import {
   MailIcon,
   QuoteIcon,
   ClipboardListIcon,
+  CodeIcon,
 } from "@/components/icons";
 
 type Leaf = { href: string; key: string; exact?: boolean; tkey?: string };
@@ -84,6 +85,13 @@ const nav: Item[] = [
     href: "/admin/surveys",
     key: "surveys",
     Icon: ClipboardListIcon,
+    exact: false,
+  },
+  {
+    type: "link",
+    href: "/admin/static-pages",
+    key: "staticPages",
+    Icon: CodeIcon,
     exact: false,
   },
   {

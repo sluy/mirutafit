@@ -189,6 +189,24 @@ model Page {
   @@map("page")
 }
 
+/// A standalone static HTML page served verbatim at /static/<slug>, completely
+/// outside the site layout/chrome/i18n. The admin pastes raw HTML (or uploads an
+/// .html file) and it is returned as-is by a route handler. See docs/static-pages.md.
+model StaticPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String   @default("") // admin-facing label only (not shown to visitors)
+  html      String   @default("") // raw HTML, served exactly as stored
+  published Boolean  @default(true) // unpublished -> 404
+  // When true, this page also shows the maintenance notice while maintenance
+  // mode is on (admins still see it). Default: unaffected by maintenance.
+  respectMaintenance Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("static_page")
+}
+
 /// Shared taxonomy term (categories and tags), reusable across the app.
 /// `kind` distinguishes them; `key` is a stable snake_case id; labels are
 /// per-locale (see TaxonomyTranslation). See docs/articles.md.
