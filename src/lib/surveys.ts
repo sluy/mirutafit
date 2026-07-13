@@ -324,3 +324,8 @@ export async function getSurveyResponses(id: string): Promise<{
     })),
   };
 }
+
+/** Delete a single survey response (cascade deletes its answers). */
+export async function deleteSurveyResponse(responseId: string): Promise<void> {
+  await prisma.surveyResponse.delete({ where: { id: responseId } });
+}

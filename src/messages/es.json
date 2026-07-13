@@ -910,7 +910,11 @@
       "imported": "Encuesta importada como borrador",
       "importBadFormat": "Formato de archivo inválido. Usa un JSON de encuesta de MiRutaFit.",
       "copyLink": "Copiar enlace",
-      "linkCopied": "Enlace copiado"
+      "linkCopied": "Enlace copiado",
+      "downloadPdf": "Descargar PDF",
+      "deleteResponse": "Eliminar",
+      "deleteResponseConfirm": "¿Estás seguro de que deseas eliminar esta respuesta? Esta acción no se puede deshacer.",
+      "responseDeleted": "Respuesta eliminada."
     },
     "staticPages": {
       "title": "Páginas estáticas",

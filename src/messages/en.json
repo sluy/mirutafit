@@ -910,7 +910,11 @@
       "imported": "Survey imported as draft",
       "importBadFormat": "Invalid file format. Please use a MiRutaFit survey JSON.",
       "copyLink": "Copy link",
-      "linkCopied": "Link copied"
+      "linkCopied": "Link copied",
+      "downloadPdf": "Download PDF",
+      "deleteResponse": "Delete",
+      "deleteResponseConfirm": "Are you sure you want to delete this response? This cannot be undone.",
+      "responseDeleted": "Response deleted."
     },
     "staticPages": {
       "title": "Static pages",

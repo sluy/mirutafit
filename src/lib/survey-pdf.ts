@@ -102,9 +102,10 @@ export async function buildSurveyResponsePdf(input: SurveyPdfInput): Promise<Uin
   // ── Header: survey title + answered date/time ──
   drawLines(input.surveyTitle || "Encuesta", bold, 20, ink, 6);
   y -= 2;
-  const stamp = input.answeredAt.toLocaleString("es-ES", {
+  const stamp = input.answeredAt.toLocaleString("es-VE", {
     dateStyle: "long",
     timeStyle: "short",
+    timeZone: "America/Caracas",
   });
   drawLines(`Respondida el ${stamp}`, font, 11, muted, 4);
   y -= 8;

@@ -6,6 +6,7 @@ import {
   createSurvey,
   saveSurvey,
   deleteSurvey,
+  deleteSurveyResponse,
   exportSurvey,
   importSurvey,
   type SurveyEditData,
@@ -56,3 +57,10 @@ export async function importSurveyAction(
   return res;
 }
 
+export async function deleteSurveyResponseAction(
+  responseId: string,
+): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  await deleteSurveyResponse(responseId);
+  return { ok: true };
+}

@@ -19,13 +19,12 @@ export function visitorFromHeaders(h: Headers): VisitorInfo {
   return { ip, country: country || undefined, userAgent };
 }
 
-/** Small "(IP · país · navegador)" footer, only with the fields we actually have. */
+/** Small "(IP · país)" footer, only with the fields we actually have. */
 function visitorFooter(v?: VisitorInfo): string {
   if (!v) return "";
   const parts: string[] = [];
-  if (v.country) parts.push(`País: ${v.country}`);
   if (v.ip) parts.push(`IP: ${v.ip}`);
-  if (v.userAgent) parts.push(v.userAgent.slice(0, 120));
+  if (v.country) parts.push(`País: ${v.country}`);
   if (parts.length === 0) return "";
   return `\n<i>${tgHtml(parts.join(" · "))}</i>`;
 }
