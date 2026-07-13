@@ -12,7 +12,7 @@ import {
   deleteStaticPageAction,
 } from "@/app/admin/static-pages/actions";
 
-export default function StaticPagesList({ pages }: { pages: StaticPageListItem[] }) {
+export default function StaticPagesList({ pages, views }: { pages: StaticPageListItem[]; views: Record<string, number> }) {
   const t = useTranslations("admin.staticPages");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -65,6 +65,7 @@ export default function StaticPagesList({ pages }: { pages: StaticPageListItem[]
               <tr>
                 <th className="px-6 py-3 font-semibold">{t("colTitle")}</th>
                 <th className="px-6 py-3 font-semibold">{t("colStatus")}</th>
+                <th className="px-6 py-3 text-center font-semibold">{t("colViews")}</th>
                 <th className="px-6 py-3 text-right font-semibold">{t("colActions")}</th>
               </tr>
             </thead>
@@ -85,6 +86,9 @@ export default function StaticPagesList({ pages }: { pages: StaticPageListItem[]
                     >
                       {p.published ? t("published") : t("draft")}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm text-ink/50">
+                    {views[p.id] ?? 0}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1">
