@@ -51,7 +51,7 @@ export async function GET(
     .trim() || "Encuesta";
   const filename = `${ymd}-${safeName}.pdf`;
 
-  return new NextResponse(pdf, {
+  return new NextResponse(Buffer.from(pdf), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${filename}"`,
