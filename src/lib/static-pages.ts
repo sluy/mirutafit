@@ -36,6 +36,7 @@ export async function getStaticPageForEdit(
     html: p.html,
     published: p.published,
     respectMaintenance: p.respectMaintenance,
+    notifyViews: p.notifyViews,
   };
 }
 
@@ -65,6 +66,7 @@ export async function saveStaticPage(
         html: input.html,
         published: input.published,
         respectMaintenance: input.respectMaintenance,
+        notifyViews: input.notifyViews,
       },
     });
     return { ok: true };

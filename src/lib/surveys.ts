@@ -13,6 +13,9 @@ import {
   type SurveyExportData,
 } from "./surveys-shared";
 import { Prisma } from "@/generated/prisma/client";
+import { after } from "next/server";
+import { headers } from "next/headers";
+import { notifySurveyResponse, visitorFromHeaders, type VisitorInfo } from "./notify";
 
 // Re-export the client-safe bits so server callers can import from one place.
 export {
@@ -80,6 +83,8 @@ export async function getSurveyForEdit(id: string): Promise<SurveyEditData | nul
     disclaimer: s.disclaimer,
     submitText: s.submitText,
     status: s.status,
+    notifyViews: s.notifyViews,
+    notifyResponses: s.notifyResponses,
     questions: s.questions.map(toQuestion),
   };
 }
@@ -108,6 +113,8 @@ export async function saveSurvey(
           disclaimer: input.disclaimer,
           submitText: input.submitText,
           status: input.status,
+          notifyViews: input.notifyViews,
+          notifyResponses: input.notifyResponses,
         },
       });
 
@@ -255,9 +262,11 @@ export async function submitSurveyResponse(
     if (q.required && !byId.get(q.id)) return { ok: false, error: "validation" };
   }
 
+  const answeredAt = new Date();
   await prisma.surveyResponse.create({
     data: {
       surveyId: survey.id,
+      createdAt: answeredAt,
       answers: {
         create: survey.questions
           .filter((q) => byId.get(q.id))
@@ -265,6 +274,28 @@ export async function submitSurveyResponse(
       },
     },
   });
+
+  // Telegram notification + PDF of the answers (if this survey opted in).
+  if (survey.notifyResponses) {
+    const items = [...survey.questions]
+      .sort((a, b) => a.order - b.order)
+      .map((q) => ({ label: q.label, answer: byId.get(q.id) ?? "" }));
+    let visitor: VisitorInfo | undefined;
+    try {
+      visitor = visitorFromHeaders(await headers());
+    } catch {
+      // headers() unavailable outside a request — send without visitor data
+    }
+    after(() =>
+      notifySurveyResponse({
+        surveyTitle: survey.title,
+        answeredAt,
+        items,
+        visitor,
+      }),
+    );
+  }
+
   return { ok: true };
 }
 

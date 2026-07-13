@@ -106,6 +106,18 @@ export default function StaticPageEditor({ page }: { page: StaticPageEditData })
             <span className="mt-0.5 block text-xs text-ink/40">{t("respectMaintenanceHint")}</span>
           </span>
         </label>
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.02] p-4">
+          <input
+            type="checkbox"
+            checked={data.notifyViews}
+            onChange={(e) => set({ notifyViews: e.target.checked })}
+            className="mt-0.5 h-4 w-4 rounded border-ink/20 text-brand focus:ring-brand"
+          />
+          <span>
+            <span className="block text-sm font-medium text-ink/80">{t("notifyViews")}</span>
+            <span className="mt-0.5 block text-xs text-ink/40">{t("notifyViewsHint")}</span>
+          </span>
+        </label>
       </div>
 
       {/* HTML */}

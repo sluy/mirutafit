@@ -108,6 +108,7 @@ const nav: Item[] = [
     key: "system",
     Icon: SettingsIcon,
     children: [
+      { href: "/admin/system/telegram", key: "systemTelegram" },
       { href: "/admin/system/email", key: "systemEmail" },
       { href: "/admin/system/codes", key: "systemCodes" },
       { href: "/admin/system/languages", key: "systemLanguages" },

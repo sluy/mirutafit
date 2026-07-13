@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPublicSurvey } from "@/lib/surveys";
 import SurveyForm from "@/components/surveys/SurveyForm";
+import ViewCounter from "@/components/ViewCounter";
 
 type Params = Promise<{ slug: string }>;
 
@@ -20,5 +21,10 @@ export default async function SurveyPage({ params }: { params: Params }) {
   const { slug } = await params;
   const survey = await getPublicSurvey(slug);
   if (!survey) notFound();
-  return <SurveyForm survey={survey} />;
+  return (
+    <>
+      <ViewCounter viewKey={`survey:${survey.id}`} />
+      <SurveyForm survey={survey} />
+    </>
+  );
 }

@@ -12,7 +12,13 @@ import {
   deleteArticleAction,
 } from "@/app/admin/content/articles/actions";
 
-export default function ArticlesList({ articles }: { articles: ArticleListItem[] }) {
+export default function ArticlesList({
+  articles,
+  views,
+}: {
+  articles: ArticleListItem[];
+  views: Record<string, number>;
+}) {
   const t = useTranslations("admin.articles");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -57,6 +63,7 @@ export default function ArticlesList({ articles }: { articles: ArticleListItem[]
                 <th className="px-6 py-3 font-semibold">{t("colTitle")}</th>
                 <th className="px-6 py-3 font-semibold">{t("colStatus")}</th>
                 <th className="px-6 py-3 font-semibold">{t("colDate")}</th>
+                <th className="px-6 py-3 font-semibold">{t("colViews")}</th>
                 <th className="px-6 py-3 text-right font-semibold">{t("colActions")}</th>
               </tr>
             </thead>
@@ -84,6 +91,9 @@ export default function ArticlesList({ articles }: { articles: ArticleListItem[]
                   </td>
                   <td className="px-6 py-4 text-ink/50">
                     {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : "—"}
+                  </td>
+                  <td className="px-6 py-4 text-ink/50 tabular-nums">
+                    {(views[a.id] ?? 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex justify-end">

@@ -6,6 +6,7 @@ import { listTaxonomies } from "@/lib/taxonomy";
 import { taxonomyLabel } from "@/lib/taxonomy-shared";
 import ArticleCard from "@/components/articles/ArticleCard";
 import ArticleFilters from "@/components/articles/ArticleFilters";
+import ViewCounter from "@/components/ViewCounter";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("articles");
@@ -62,6 +63,7 @@ export default async function ArticlesPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
+      <ViewCounter viewKey="page:articles" />
       <header className="mb-10 max-w-2xl">
         <p className="text-sm font-semibold uppercase tracking-wider text-brand">{t("eyebrow")}</p>
         <h1 className="mt-2 font-display text-4xl font-extrabold text-ink sm:text-5xl">{t("title")}</h1>

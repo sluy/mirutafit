@@ -124,6 +124,32 @@ export default function SurveyEditor({ survey }: { survey: SurveyEditData }) {
           <label className="mb-1.5 block text-sm font-medium text-ink/70">{t("fieldSubmitText")}</label>
           <textarea value={data.submitText} onChange={(e) => set({ submitText: e.target.value })} rows={2} className={`${inputClass()} resize-none`} placeholder={t("submitTextHint")} />
         </div>
+        <div className="space-y-2">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.02] p-3.5">
+            <input
+              type="checkbox"
+              checked={data.notifyViews}
+              onChange={(e) => set({ notifyViews: e.target.checked })}
+              className="mt-0.5 h-4 w-4 rounded border-ink/20 text-brand focus:ring-brand"
+            />
+            <span>
+              <span className="block text-sm font-medium text-ink/80">{t("notifyViews")}</span>
+              <span className="mt-0.5 block text-xs text-ink/40">{t("notifyViewsHint")}</span>
+            </span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.02] p-3.5">
+            <input
+              type="checkbox"
+              checked={data.notifyResponses}
+              onChange={(e) => set({ notifyResponses: e.target.checked })}
+              className="mt-0.5 h-4 w-4 rounded border-ink/20 text-brand focus:ring-brand"
+            />
+            <span>
+              <span className="block text-sm font-medium text-ink/80">{t("notifyResponses")}</span>
+              <span className="mt-0.5 block text-xs text-ink/40">{t("notifyResponsesHint")}</span>
+            </span>
+          </label>
+        </div>
       </div>
 
       {/* Questions */}

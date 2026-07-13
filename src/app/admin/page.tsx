@@ -1,12 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { getViewCounts } from "@/lib/views";
 import { UsersIcon, HeartIcon, ClockIcon } from "@/components/icons";
 
 export default async function AdminDashboardPage() {
   const t = await getTranslations("admin.dashboard");
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const [total, admins, banned, newThisWeek, recent] = await Promise.all([
+  const [total, admins, banned, newThisWeek, recent, pageViews] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: { contains: "admin" } } }),
     prisma.user.count({ where: { banned: true } }),
@@ -16,7 +17,13 @@ export default async function AdminDashboardPage() {
       take: 5,
       select: { id: true, name: true, email: true, createdAt: true, role: true },
     }),
+    getViewCounts(["page:home", "page:articles"]),
   ]);
+
+  const staticViews = [
+    { label: t("viewHome"), value: pageViews["page:home"] ?? 0 },
+    { label: t("viewArticles"), value: pageViews["page:articles"] ?? 0 },
+  ];
 
   const stats = [
     { label: t("totalUsers"), value: total, Icon: UsersIcon, color: "bg-brand" },
@@ -43,6 +50,20 @@ export default async function AdminDashboardPage() {
           </div>
         ))}
       </div>
+
+      <section className="mt-8">
+        <h2 className="mb-4 font-display text-lg font-bold text-ink">{t("pageViews")}</h2>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {staticViews.map((v) => (
+            <div key={v.label} className="rounded-2xl border border-ink/5 bg-white p-5 shadow-sm">
+              <p className="font-display text-3xl font-extrabold text-ink tabular-nums">
+                {v.value.toLocaleString()}
+              </p>
+              <p className="text-sm text-ink/50">{v.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-10">
         <h2 className="mb-4 font-display text-lg font-bold text-ink">{t("recentUsers")}</h2>

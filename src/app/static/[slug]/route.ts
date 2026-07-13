@@ -1,6 +1,9 @@
+import { after } from "next/server";
 import { getPublishedStaticPage } from "@/lib/static-pages";
 import { getMaintenanceSettings } from "@/lib/settings";
 import { getSessionUser, isAdmin } from "@/lib/auth-guard";
+import { recordView } from "@/lib/views";
+import { notifyView, visitorFromHeaders } from "@/lib/notify";
 
 // Always hit the DB — pages are edited from the admin and must reflect instantly.
 export const dynamic = "force-dynamic";
@@ -12,7 +15,7 @@ export const dynamic = "force-dynamic";
  * A page can opt into the maintenance gate via its `respectMaintenance` flag.
  */
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
@@ -38,6 +41,13 @@ export async function GET(
       });
     }
   }
+
+  // Count the visit + notify (if this page opted in) after the response is sent.
+  const visitor = visitorFromHeaders(req.headers);
+  after(async () => {
+    await recordView(`page:${slug}`);
+    await notifyView(`page:${slug}`, visitor);
+  });
 
   return new Response(page.html, {
     status: 200,

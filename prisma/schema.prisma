@@ -201,6 +201,8 @@ model StaticPage {
   // When true, this page also shows the maintenance notice while maintenance
   // mode is on (admins still see it). Default: unaffected by maintenance.
   respectMaintenance Boolean @default(false)
+  // Send a Telegram notification when this page is visited (see docs/notifications.md).
+  notifyViews Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -287,6 +289,9 @@ model Survey {
   disclaimer  String   @default("") // optional highlighted warning box
   submitText  String   @default("") // thank-you message after submitting
   status      String   @default("draft") // "draft" | "open" | "closed"
+  // Telegram notifications (see docs/notifications.md).
+  notifyViews     Boolean @default(false) // notify when the survey page is visited
+  notifyResponses Boolean @default(false) // notify + attach a PDF when someone responds
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -354,6 +359,17 @@ model Comment {
   @@index([status])
   @@index([createdAt])
   @@map("comment")
+}
+
+/// Anecdotal view counter, keyed by a stable string:
+///   "page:home", "page:articles", "article:<id>", "survey:<id>".
+/// Incremented from the client (once per session per key). See src/lib/views.ts.
+model PageView {
+  key       String   @id
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("page_view")
 }
 
 /// Per-locale content for an article.

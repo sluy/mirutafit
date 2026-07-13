@@ -46,6 +46,8 @@ export type SurveyEditData = {
   disclaimer: string;
   submitText: string;
   status: string;
+  notifyViews: boolean;
+  notifyResponses: boolean;
   questions: SurveyQuestionData[];
 };
 

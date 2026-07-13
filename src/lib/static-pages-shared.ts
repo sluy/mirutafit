@@ -17,4 +17,5 @@ export type StaticPageEditData = {
   html: string;
   published: boolean;
   respectMaintenance: boolean;
+  notifyViews: boolean;
 };

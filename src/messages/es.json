@@ -165,7 +165,8 @@
       "community": "Comunidad",
       "surveys": "Encuestas",
       "staticPages": "Páginas estáticas",
-      "systemMaintenance": "Mantenimiento"
+      "systemMaintenance": "Mantenimiento",
+      "systemTelegram": "Telegram"
     },
     "content": {
       "categories": {
@@ -188,6 +189,7 @@
       "colTitle": "Título",
       "colStatus": "Estado",
       "colDate": "Fecha",
+      "colViews": "Visitas",
       "colActions": "Acciones",
       "published": "Publicado",
       "draft": "Borrador",
@@ -670,7 +672,10 @@
       "admins": "Administradores",
       "banned": "Baneados",
       "newThisWeek": "Nuevos esta semana",
-      "recentUsers": "Usuarios recientes"
+      "recentUsers": "Usuarios recientes",
+      "pageViews": "Visitas de páginas",
+      "viewHome": "Inicio",
+      "viewArticles": "Página de artículos"
     },
     "users": {
       "title": "Usuarios",
@@ -825,6 +830,23 @@
       "error": "Algo salió mal.",
       "save": "Guardar"
     },
+    "telegram": {
+      "title": "Notificaciones por Telegram",
+      "subtitle": "Recibe un aviso en Telegram cuando alguien visita o responde tus páginas y encuestas.",
+      "enabled": "Activar notificaciones",
+      "enabledHint": "Si está desactivado, no se envía ningún mensaje aunque las páginas o encuestas lo tengan marcado.",
+      "botToken": "Token del bot",
+      "botTokenHint": "Habla con @BotFather en Telegram, usa /newbot y copia el token.",
+      "chatId": "ID del chat",
+      "chatIdHint": "Escríbele algo al bot y abre api.telegram.org/bot'<'TOKEN'>'/getUpdates para ver message.chat.id. Para un canal usa @nombre_canal.",
+      "save": "Guardar",
+      "test": "Probar",
+      "saved": "Configuración de Telegram guardada.",
+      "error": "No se pudo guardar.",
+      "missing": "Completa el token y el ID del chat antes de probar.",
+      "testOk": "Mensaje de prueba enviado. Revisa Telegram.",
+      "testFail": "No se pudo enviar"
+    },
     "surveys": {
       "title": "Encuestas",
       "subtitle": "Crea formularios y recolecta respuestas.",
@@ -834,6 +856,7 @@
       "colStatus": "Estado",
       "colQuestions": "Preguntas",
       "colResponses": "Respuestas",
+        "colViews": "Visitas",
       "colActions": "",
       "status_draft": "Borrador",
       "status_open": "Abierta",
@@ -855,6 +878,10 @@
       "disclaimerHint": "Aviso opcional resaltado que se muestra arriba.",
       "fieldSubmitText": "Mensaje de agradecimiento",
       "submitTextHint": "Se muestra después de enviar.",
+      "notifyViews": "Notificar visitas",
+      "notifyViewsHint": "Envía un mensaje de Telegram cada vez que se visita esta encuesta.",
+      "notifyResponses": "Notificar respuestas",
+      "notifyResponsesHint": "Envía un mensaje de Telegram con un PDF de las respuestas cada vez que alguien responde.",
       "questions": "Preguntas",
       "questionsHint": "Agrupa preguntas dándoles el mismo nombre de sección.",
       "addQuestion": "Agregar pregunta",
@@ -910,6 +937,8 @@
       "fieldSlug": "Slug (URL)",
       "respectMaintenance": "Ocultar en modo mantenimiento",
       "respectMaintenanceHint": "Si está activado, esta página también mostrará el aviso de mantenimiento cuando el sitio esté en mantenimiento (los admins siempre la ven). Por defecto, las páginas estáticas son visibles siempre.",
+      "notifyViews": "Notificar visitas",
+      "notifyViewsHint": "Envía un mensaje de Telegram cada vez que se visita esta página.",
       "html": "Código HTML",
       "htmlHint": "Se sirve tal cual, sin el layout ni los estilos de MiRutaFit. Pega un documento HTML completo o sube un archivo.",
       "uploadFile": "Subir archivo .html",

@@ -376,3 +376,35 @@ export async function saveLocaleSettings(input: LocaleSettings): Promise<void> {
     update: { value: input },
   });
 }
+
+// ── Telegram notifications ────────────────────────────────────
+// Bot credentials for sending visit/response notifications to a chat.
+// Stored under the key "telegram". See docs/notifications.md and src/lib/telegram.ts.
+
+export type TelegramSettings = {
+  enabled: boolean; // master switch
+  botToken: string; // token from @BotFather
+  chatId: string; // destination chat id (numeric) or @channel
+};
+
+export const TELEGRAM_KEY = "telegram";
+
+export const defaultTelegramSettings: TelegramSettings = {
+  enabled: false,
+  botToken: "",
+  chatId: "",
+};
+
+export async function getTelegramSettings(): Promise<TelegramSettings> {
+  const row = await prisma.systemSetting.findUnique({ where: { key: TELEGRAM_KEY } });
+  if (!row) return defaultTelegramSettings;
+  return { ...defaultTelegramSettings, ...(row.value as Partial<TelegramSettings>) };
+}
+
+export async function saveTelegramSettings(input: TelegramSettings): Promise<void> {
+  await prisma.systemSetting.upsert({
+    where: { key: TELEGRAM_KEY },
+    create: { key: TELEGRAM_KEY, value: input },
+    update: { value: input },
+  });
+}

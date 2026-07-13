@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getPublishedArticle } from "@/lib/articles";
 import { mediaUrl } from "@/components/admin/media/types";
 import { ArrowRightIcon } from "@/components/icons";
+import ViewCounter from "@/components/ViewCounter";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -45,6 +46,7 @@ export default async function ArticleDetailPage({ params }: { params: Params }) 
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
+      <ViewCounter viewKey={`article:${article.id}`} />
       <Link
         href="/articles"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-ink/50 transition-colors hover:text-brand"

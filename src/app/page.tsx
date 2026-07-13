@@ -8,6 +8,7 @@ import Support from "@/components/Support";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import PageRenderer from "@/components/PageRenderer";
+import ViewCounter from "@/components/ViewCounter";
 import { getOrCreatePage, pageLayout, getLayoutWidgets } from "@/lib/pages";
 import { getSocialLinks } from "@/lib/settings";
 import { WIDGET_META } from "@/widgets/meta";
@@ -23,6 +24,7 @@ export default async function Home() {
     const widgets = await getLayoutWidgets(layout);
     return (
       <main className="flex-1">
+        <ViewCounter viewKey="page:home" />
         <PageRenderer layout={layout} widgets={widgets} />
       </main>
     );
@@ -32,6 +34,7 @@ export default async function Home() {
   const social = await getSocialLinks();
   return (
     <>
+      <ViewCounter viewKey="page:home" />
       <div className="fixed inset-x-0 top-0 z-50">
         <Navbar config={WIDGET_META.navbar.defaultConfig as NavbarConfig} />
       </div>

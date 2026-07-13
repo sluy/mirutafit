@@ -165,7 +165,8 @@
       "community": "Community",
       "surveys": "Surveys",
       "staticPages": "Static pages",
-      "systemMaintenance": "Maintenance"
+      "systemMaintenance": "Maintenance",
+      "systemTelegram": "Telegram"
     },
     "content": {
       "categories": {
@@ -188,6 +189,7 @@
       "colTitle": "Title",
       "colStatus": "Status",
       "colDate": "Date",
+      "colViews": "Views",
       "colActions": "Actions",
       "published": "Published",
       "draft": "Draft",
@@ -670,7 +672,10 @@
       "admins": "Admins",
       "banned": "Banned",
       "newThisWeek": "New this week",
-      "recentUsers": "Recent users"
+      "recentUsers": "Recent users",
+      "pageViews": "Page views",
+      "viewHome": "Home",
+      "viewArticles": "Articles page"
     },
     "users": {
       "title": "Users",
@@ -825,6 +830,23 @@
       "error": "Something went wrong.",
       "save": "Save"
     },
+    "telegram": {
+      "title": "Telegram notifications",
+      "subtitle": "Get a Telegram ping when someone visits or responds to your pages and surveys.",
+      "enabled": "Enable notifications",
+      "enabledHint": "When off, no message is sent even if pages or surveys have it checked.",
+      "botToken": "Bot token",
+      "botTokenHint": "Talk to @BotFather on Telegram, use /newbot and copy the token.",
+      "chatId": "Chat ID",
+      "chatIdHint": "Message the bot, then open api.telegram.org/bot'<'TOKEN'>'/getUpdates to read message.chat.id. For a channel use @channel_name.",
+      "save": "Save",
+      "test": "Test",
+      "saved": "Telegram settings saved.",
+      "error": "Could not save.",
+      "missing": "Enter the token and chat ID before testing.",
+      "testOk": "Test message sent. Check Telegram.",
+      "testFail": "Could not send"
+    },
     "surveys": {
       "title": "Surveys",
       "subtitle": "Build forms and collect responses.",
@@ -834,6 +856,7 @@
       "colStatus": "Status",
       "colQuestions": "Questions",
       "colResponses": "Responses",
+        "colViews": "Views",
       "colActions": "",
       "status_draft": "Draft",
       "status_open": "Open",
@@ -855,6 +878,10 @@
       "disclaimerHint": "Optional highlighted warning shown at the top.",
       "fieldSubmitText": "Thank-you message",
       "submitTextHint": "Shown after the visitor submits.",
+      "notifyViews": "Notify views",
+      "notifyViewsHint": "Send a Telegram message every time this survey is visited.",
+      "notifyResponses": "Notify responses",
+      "notifyResponsesHint": "Send a Telegram message with a PDF of the answers every time someone responds.",
       "questions": "Questions",
       "questionsHint": "Group questions by giving them the same section name.",
       "addQuestion": "Add question",
@@ -910,6 +937,8 @@
       "fieldSlug": "Slug (URL)",
       "respectMaintenance": "Hide during maintenance mode",
       "respectMaintenanceHint": "When on, this page also shows the maintenance notice while the site is in maintenance mode (admins always see it). By default, static pages are always visible.",
+      "notifyViews": "Notify views",
+      "notifyViewsHint": "Send a Telegram message every time this page is visited.",
       "html": "HTML code",
       "htmlHint": "Served verbatim, without MiRutaFit's layout or styles. Paste a full HTML document or upload a file.",
       "uploadFile": "Upload .html file",

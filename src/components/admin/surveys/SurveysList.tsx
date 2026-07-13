@@ -20,7 +20,13 @@ const STATUS_STYLE: Record<string, string> = {
   draft: "bg-ink/5 text-ink/50",
 };
 
-export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) {
+export default function SurveysList({
+  surveys,
+  views,
+}: {
+  surveys: SurveyListItem[];
+  views: Record<string, number>;
+}) {
   const t = useTranslations("admin.surveys");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -138,6 +144,7 @@ export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) 
                 <th className="px-6 py-3 font-semibold">{t("colStatus")}</th>
                 <th className="px-6 py-3 text-center font-semibold">{t("colQuestions")}</th>
                 <th className="px-6 py-3 text-center font-semibold">{t("colResponses")}</th>
+                <th className="px-6 py-3 text-center font-semibold">{t("colViews")}</th>
                 <th className="px-6 py-3 text-right font-semibold">{t("colActions")}</th>
               </tr>
             </thead>
@@ -160,6 +167,9 @@ export default function SurveysList({ surveys }: { surveys: SurveyListItem[] }) 
                     <Link href={`/admin/surveys/${s.id}/responses`} className="font-semibold text-brand hover:underline">
                       {s.responseCount}
                     </Link>
+                  </td>
+                  <td className="px-6 py-4 text-center text-ink/50 tabular-nums">
+                    {(views[s.id] ?? 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1">
