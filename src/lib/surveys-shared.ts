@@ -2,6 +2,33 @@
  * Client-safe survey types + constants (no Prisma / node imports). The DB
  * functions live in `surveys.ts` (server only) and re-export these.
  */
+
+// The intro/disclaimer/thank-you fields hold rich HTML (edited with the app's
+// WYSIWYG editor). Legacy surveys may still hold plain text — these helpers let
+// callers render both safely.
+
+/** True if the string contains an HTML tag (vs. legacy plain text). */
+export function looksLikeHtml(s: string): boolean {
+  return /<[a-z!/][\s\S]*>/i.test(s);
+}
+
+/** Strip tags/entities to plain text (for meta descriptions, previews, checks). */
+export function stripHtml(s: string): string {
+  return (s || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** True if the (possibly HTML) value has any visible content. */
+export function htmlHasContent(s: string): boolean {
+  return stripHtml(s).length > 0;
+}
+
 export type QuestionType =
   | "short_text"
   | "long_text"

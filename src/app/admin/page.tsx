@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getViewCounts } from "@/lib/views";
@@ -21,8 +22,8 @@ export default async function AdminDashboardPage() {
   ]);
 
   const staticViews = [
-    { label: t("viewHome"), value: pageViews["page:home"] ?? 0 },
-    { label: t("viewArticles"), value: pageViews["page:articles"] ?? 0 },
+    { label: t("viewHome"), value: pageViews["page:home"] ?? 0, key: "page:home" },
+    { label: t("viewArticles"), value: pageViews["page:articles"] ?? 0, key: "page:articles" },
   ];
 
   const stats = [
@@ -55,12 +56,16 @@ export default async function AdminDashboardPage() {
         <h2 className="mb-4 font-display text-lg font-bold text-ink">{t("pageViews")}</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {staticViews.map((v) => (
-            <div key={v.label} className="rounded-2xl border border-ink/5 bg-white p-5 shadow-sm">
+            <Link
+              key={v.label}
+              href={`/admin/visits?key=${v.key}`}
+              className="rounded-2xl border border-ink/5 bg-white p-5 shadow-sm transition-colors hover:border-brand/30"
+            >
               <p className="font-display text-3xl font-extrabold text-ink tabular-nums">
                 {v.value.toLocaleString()}
               </p>
               <p className="text-sm text-ink/50">{v.label}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

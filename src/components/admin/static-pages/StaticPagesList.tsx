@@ -87,8 +87,13 @@ export default function StaticPagesList({ pages, views }: { pages: StaticPageLis
                       {p.published ? t("published") : t("draft")}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm text-ink/50">
-                    {views[p.id] ?? 0}
+                  <td className="px-6 py-4 text-center text-sm tabular-nums">
+                    <Link
+                      href={`/admin/visits?key=page:${p.slug}`}
+                      className="font-medium text-ink/50 hover:text-brand hover:underline"
+                    >
+                      {(views[p.id] ?? 0).toLocaleString()}
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1">

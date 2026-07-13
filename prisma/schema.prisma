@@ -372,6 +372,25 @@ model PageView {
   @@map("page_view")
 }
 
+/// One row per individual visit, powering the detailed visit history.
+/// The fast aggregate lives in PageView.count; this is the anecdotal detail.
+/// See docs/notifications.md / analytics.
+model ViewEvent {
+  id          String   @id @default(cuid())
+  key         String // same shape as PageView.key (survey:<id>, page:<slug>, ...)
+  createdAt   DateTime @default(now())
+  ip          String   @default("")
+  country     String   @default("") // human name, e.g. "Venezuela"
+  countryCode String   @default("") // ISO-2, e.g. "VE" (for the flag)
+  region      String   @default("")
+  city        String   @default("")
+  userAgent   String   @default("")
+  referer     String   @default("")
+
+  @@index([key, createdAt])
+  @@map("view_event")
+}
+
 /// Per-locale content for an article.
 model ArticleTranslation {
   id          String   @id @default(cuid())

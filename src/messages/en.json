@@ -847,6 +847,22 @@
       "testOk": "Test message sent. Check Telegram.",
       "testFail": "Could not send"
     },
+    "visits": {
+      "title": "Visit history",
+      "back": "Back",
+      "visits": "visits",
+      "empty": "No detailed visits recorded yet.",
+      "colWhen": "Date & time",
+      "colLocation": "Location",
+      "colIp": "IP",
+      "colBrowser": "Browser",
+      "colSource": "Source",
+      "direct": "Direct",
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}",
+      "partialNote": "Per-visit detail started being stored recently, so some older visits only count toward the total."
+    },
     "surveys": {
       "title": "Surveys",
       "subtitle": "Build forms and collect responses.",

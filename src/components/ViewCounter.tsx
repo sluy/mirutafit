@@ -20,7 +20,9 @@ export default function ViewCounter({ viewKey }: { viewKey: string }) {
     fetch("/api/views", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: viewKey }),
+      // `ref` is where the visitor came from (traffic source) — the beacon's own
+      // Referer header would just be this page, so we send document.referrer.
+      body: JSON.stringify({ key: viewKey, ref: document.referrer || "" }),
       keepalive: true,
     }).catch(() => {});
   }, [viewKey]);

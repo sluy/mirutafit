@@ -5,7 +5,21 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CheckIcon } from "@/components/icons";
 import type { PublicSurvey, SurveyQuestionData } from "@/lib/surveys-shared";
+import { looksLikeHtml, htmlHasContent } from "@/lib/surveys-shared";
 import { submitSurveyAction } from "@/app/encuestas/actions";
+
+/**
+ * Render a rich-text field: as HTML (with the app's .tiptap styles) when it
+ * contains markup, or as plain pre-wrapped text for legacy surveys.
+ */
+function RichText({ html, className }: { html: string; className?: string }) {
+  if (looksLikeHtml(html)) {
+    return (
+      <div className={`tiptap ${className ?? ""}`} dangerouslySetInnerHTML={{ __html: html }} />
+    );
+  }
+  return <p className={`whitespace-pre-wrap ${className ?? ""}`}>{html}</p>;
+}
 
 export default function SurveyForm({ survey }: { survey: PublicSurvey }) {
   const t = useTranslations("surveys");
@@ -60,7 +74,11 @@ export default function SurveyForm({ survey }: { survey: PublicSurvey }) {
           <CheckIcon width={28} height={28} />
         </div>
         <h1 className="font-display text-2xl font-extrabold text-ink">{t("thanksTitle")}</h1>
-        <p className="mt-3 whitespace-pre-wrap text-ink/70">{survey.submitText || t("thanksDefault")}</p>
+        {htmlHasContent(survey.submitText) ? (
+          <RichText html={survey.submitText} className="mt-3 text-ink/70" />
+        ) : (
+          <p className="mt-3 text-ink/70">{t("thanksDefault")}</p>
+        )}
       </div>
     );
   }
@@ -81,11 +99,14 @@ export default function SurveyForm({ survey }: { survey: PublicSurvey }) {
       {/* Header */}
       <div className="mb-8">
         <h1 className="font-display text-3xl font-extrabold leading-tight text-ink sm:text-4xl">{survey.title}</h1>
-        {survey.description && <p className="mt-4 whitespace-pre-wrap leading-relaxed text-ink/70">{survey.description}</p>}
-        {survey.disclaimer && (
-          <p className="mt-5 whitespace-pre-wrap rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-800">
-            {survey.disclaimer}
-          </p>
+        {htmlHasContent(survey.description) && (
+          <RichText html={survey.description} className="mt-4 leading-relaxed text-ink/70" />
+        )}
+        {htmlHasContent(survey.disclaimer) && (
+          <RichText
+            html={survey.disclaimer}
+            className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-800"
+          />
         )}
       </div>
 

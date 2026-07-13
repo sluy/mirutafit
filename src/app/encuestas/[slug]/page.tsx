@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPublicSurvey } from "@/lib/surveys";
+import { stripHtml } from "@/lib/surveys-shared";
 import SurveyForm from "@/components/surveys/SurveyForm";
 import ViewCounter from "@/components/ViewCounter";
 
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!survey) return {};
   return {
     title: survey.title,
-    description: survey.description || undefined,
+    description: stripHtml(survey.description) || undefined,
     robots: { index: false }, // surveys are private forms, not for search engines
   };
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { inputClass } from "@/components/ui/Field";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 import { ArrowRightIcon, TrashIcon } from "@/components/icons";
 import { slugify, liveSlugify } from "@/lib/slug";
 import {
@@ -114,15 +115,17 @@ export default function SurveyEditor({ survey }: { survey: SurveyEditData }) {
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-ink/70">{t("fieldDescription")}</label>
-          <textarea value={data.description} onChange={(e) => set({ description: e.target.value })} rows={3} className={`${inputClass()} resize-none`} />
+          <RichTextEditor value={data.description} onChange={(html) => set({ description: html })} />
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-ink/70">{t("fieldDisclaimer")}</label>
-          <textarea value={data.disclaimer} onChange={(e) => set({ disclaimer: e.target.value })} rows={2} className={`${inputClass()} resize-none`} placeholder={t("disclaimerHint")} />
+          <RichTextEditor value={data.disclaimer} onChange={(html) => set({ disclaimer: html })} />
+          <p className="mt-1 text-xs text-ink/40">{t("disclaimerHint")}</p>
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-ink/70">{t("fieldSubmitText")}</label>
-          <textarea value={data.submitText} onChange={(e) => set({ submitText: e.target.value })} rows={2} className={`${inputClass()} resize-none`} placeholder={t("submitTextHint")} />
+          <RichTextEditor value={data.submitText} onChange={(html) => set({ submitText: html })} />
+          <p className="mt-1 text-xs text-ink/40">{t("submitTextHint")}</p>
         </div>
         <div className="space-y-2">
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.02] p-3.5">

@@ -847,6 +847,22 @@
       "testOk": "Mensaje de prueba enviado. Revisa Telegram.",
       "testFail": "No se pudo enviar"
     },
+    "visits": {
+      "title": "Historial de visitas",
+      "back": "Volver",
+      "visits": "visitas",
+      "empty": "Aún no hay visitas registradas en detalle.",
+      "colWhen": "Fecha y hora",
+      "colLocation": "Ubicación",
+      "colIp": "IP",
+      "colBrowser": "Navegador",
+      "colSource": "Origen",
+      "direct": "Directo",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "pageOf": "Página {page} de {total}",
+      "partialNote": "El detalle por visita se empezó a guardar recientemente, así que algunas visitas antiguas solo cuentan en el total."
+    },
     "surveys": {
       "title": "Encuestas",
       "subtitle": "Crea formularios y recolecta respuestas.",

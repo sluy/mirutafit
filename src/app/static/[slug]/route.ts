@@ -2,7 +2,7 @@ import { after } from "next/server";
 import { getPublishedStaticPage } from "@/lib/static-pages";
 import { getMaintenanceSettings } from "@/lib/settings";
 import { getSessionUser, isAdmin } from "@/lib/auth-guard";
-import { recordView } from "@/lib/views";
+import { recordView, recordVisitEvent } from "@/lib/views";
 import { notifyView, visitorFromHeaders } from "@/lib/notify";
 
 // Always hit the DB — pages are edited from the admin and must reflect instantly.
@@ -44,9 +44,16 @@ export async function GET(
 
   // Count the visit + notify (if this page opted in) after the response is sent.
   const visitor = visitorFromHeaders(req.headers);
+  const referer = req.headers.get("referer") ?? undefined;
   after(async () => {
     await recordView(`page:${slug}`);
     await notifyView(`page:${slug}`, visitor);
+    await recordVisitEvent(`page:${slug}`, {
+      ip: visitor.ip,
+      userAgent: visitor.userAgent,
+      referer,
+      countryCode: visitor.country,
+    });
   });
 
   return new Response(page.html, {

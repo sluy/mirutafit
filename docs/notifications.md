@@ -104,6 +104,22 @@ etiqueta contenga "nombre"/"name"; si no hay, `Anónimo`.
 - `src/lib/surveys.ts` — notifica respuesta tras guardar.
 - Admin: `TelegramSettingsForm` + acción; checkboxes en editores de encuesta y página.
 
+## Historial detallado de visitas
+
+Además del contador rápido (`PageView.count`), cada visita se guarda como fila en
+**`ViewEvent`** (fecha/hora, IP, país/ciudad, navegador, referer). Esto alimenta
+la página **`/admin/visits?key=<key>`**, a la que se llega haciendo clic en el
+número de "Visitas" (encuestas, páginas estáticas y las tarjetas del dashboard).
+
+- El evento se inserta en `after()` (post-respuesta), nunca frena la carga.
+- **Geolocalización por IP** (`src/lib/geo.ts`, `ipwho.is`, HTTPS, sin API key),
+  best-effort. Es del lado servidor y silenciosa — no usamos `navigator.geolocation`
+  porque dispararía un permiso al visitante. IPs privadas/localhost no dan geo.
+- El `referer` (origen de tráfico) del beacon lo manda el cliente como
+  `document.referrer`; en la ruta estática viene de la cabecera `referer`.
+- La tabla parsea el user-agent a navegador/SO (`src/lib/user-agent.ts`) y muestra
+  la bandera del país. Incluye un resumen de países principales.
+
 ## Seguridad / robustez
 
 - El token vive solo en la BD (`system_setting`), nunca en el cliente ni en el repo.

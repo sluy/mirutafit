@@ -168,8 +168,13 @@ export default function SurveysList({
                       {s.responseCount}
                     </Link>
                   </td>
-                  <td className="px-6 py-4 text-center text-ink/50 tabular-nums">
-                    {(views[s.id] ?? 0).toLocaleString()}
+                  <td className="px-6 py-4 text-center tabular-nums">
+                    <Link
+                      href={`/admin/visits?key=survey:${s.id}`}
+                      className="font-medium text-ink/50 hover:text-brand hover:underline"
+                    >
+                      {(views[s.id] ?? 0).toLocaleString()}
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1">
