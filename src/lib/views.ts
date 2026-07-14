@@ -1,5 +1,5 @@
 import { prisma } from "./prisma";
-import { geolocate } from "./geo";
+import { geolocate, type GeoInfo } from "./geo";
 
 /**
  * Anecdotal page-view counter. Keys are stable strings:
@@ -47,18 +47,19 @@ export type VisitorMeta = {
   userAgent?: string;
   referer?: string;
   countryCode?: string; // fallback from a proxy header (e.g. cf-ipcountry)
+  geo?: GeoInfo | null; // pre-resolved geolocation; if omitted we look it up
 };
 
 /**
  * Record one detailed visit event (fed the running counter separately). Runs
- * an IP geolocation lookup best-effort. Meant to be called from `after()` so it
- * never delays the response. Never throws.
+ * an IP geolocation lookup best-effort (unless a pre-resolved `geo` is passed).
+ * Meant to be called from `after()` so it never delays the response. Never throws.
  */
 export async function recordVisitEvent(key: string, v: VisitorMeta): Promise<void> {
   if (!isValidViewKey(key)) return;
   try {
     const ip = (v.ip ?? "").slice(0, 45);
-    const geo = ip ? await geolocate(ip) : null;
+    const geo = v.geo !== undefined ? v.geo : ip ? await geolocate(ip) : null;
     await prisma.viewEvent.create({
       data: {
         key,

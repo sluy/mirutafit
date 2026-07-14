@@ -1,13 +1,21 @@
 import { prisma } from "./prisma";
 import { sendTelegramMessage, sendTelegramDocument, tgHtml } from "./telegram";
 import { buildSurveyResponsePdf, type SurveyPdfItem } from "./survey-pdf";
+import type { GeoInfo } from "./geo";
+import { parseUserAgent, flagEmoji, refererHost } from "./user-agent";
 
 // Orchestrates the "someone visited / responded" Telegram notifications. Every
 // function here is best-effort and never throws: a failure is logged and
 // swallowed so it can't break a page view or a survey submission.
 // See docs/notifications.md.
 
-export type VisitorInfo = { ip?: string; country?: string; userAgent?: string };
+export type VisitorInfo = {
+  ip?: string;
+  country?: string; // ISO code fallback from a proxy header (e.g. cf-ipcountry)
+  userAgent?: string;
+  referer?: string;
+  geo?: GeoInfo | null; // pre-resolved geolocation (from geolocate())
+};
 
 /** Extract anecdotal visitor data from request headers (all best-effort). */
 export function visitorFromHeaders(h: Headers): VisitorInfo {
@@ -16,17 +24,40 @@ export function visitorFromHeaders(h: Headers): VisitorInfo {
   const country =
     h.get("cf-ipcountry") || h.get("x-vercel-ip-country") || undefined;
   const userAgent = h.get("user-agent") || undefined;
-  return { ip, country: country || undefined, userAgent };
+  const referer = h.get("referer") || undefined;
+  return { ip, country: country || undefined, userAgent, referer };
 }
 
-/** Small "(IP · país)" footer, only with the fields we actually have. */
+/**
+ * Multi-line footer with the same anecdotal detail shown in the admin visit
+ * history: location (city/region/country + flag), browser/OS, source, IP.
+ * Only includes the fields we actually have.
+ */
 function visitorFooter(v?: VisitorInfo): string {
   if (!v) return "";
-  const parts: string[] = [];
-  if (v.ip) parts.push(`IP: ${v.ip}`);
-  if (v.country) parts.push(`País: ${v.country}`);
-  if (parts.length === 0) return "";
-  return `\n<i>${tgHtml(parts.join(" · "))}</i>`;
+  const lines: string[] = [];
+
+  const cc = v.geo?.countryCode || v.country || "";
+  const flag = flagEmoji(cc);
+  const locParts = v.geo
+    ? [v.geo.city, v.geo.region, v.geo.country].filter(Boolean)
+    : [];
+  const locLabel = locParts.length ? locParts.join(", ") : v.country || "";
+  if (locLabel) lines.push(`📍 ${locLabel}${flag ? " " + flag : ""}`);
+  else if (flag) lines.push(`📍 ${flag}`);
+
+  if (v.userAgent) {
+    const ua = parseUserAgent(v.userAgent);
+    lines.push(`🌐 ${ua.browser} · ${ua.os}`);
+  }
+
+  const host = refererHost(v.referer || "");
+  if (host) lines.push(`🔗 ${host}`);
+
+  if (v.ip) lines.push(`🖥 ${v.ip}`);
+
+  if (lines.length === 0) return "";
+  return `\n<i>${tgHtml(lines.join("\n"))}</i>`;
 }
 
 /**

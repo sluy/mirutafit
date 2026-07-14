@@ -16,6 +16,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { after } from "next/server";
 import { headers } from "next/headers";
 import { notifySurveyResponse, visitorFromHeaders, type VisitorInfo } from "./notify";
+import { geolocate } from "./geo";
 
 // Re-export the client-safe bits so server callers can import from one place.
 export {
@@ -282,18 +283,20 @@ export async function submitSurveyResponse(
       .map((q) => ({ label: q.label, answer: byId.get(q.id) ?? "" }));
     let visitor: VisitorInfo | undefined;
     try {
+      // Read headers now (request scope); geolocation happens in after().
       visitor = visitorFromHeaders(await headers());
     } catch {
       // headers() unavailable outside a request — send without visitor data
     }
-    after(() =>
-      notifySurveyResponse({
+    after(async () => {
+      const geo = visitor?.ip ? await geolocate(visitor.ip) : null;
+      await notifySurveyResponse({
         surveyTitle: survey.title,
         answeredAt,
         items,
-        visitor,
-      }),
-    );
+        visitor: visitor ? { ...visitor, geo } : undefined,
+      });
+    });
   }
 
   return { ok: true };

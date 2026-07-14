@@ -4,6 +4,7 @@ import { getMaintenanceSettings } from "@/lib/settings";
 import { getSessionUser, isAdmin } from "@/lib/auth-guard";
 import { recordView, recordVisitEvent } from "@/lib/views";
 import { notifyView, visitorFromHeaders } from "@/lib/notify";
+import { geolocate } from "@/lib/geo";
 
 // Always hit the DB — pages are edited from the admin and must reflect instantly.
 export const dynamic = "force-dynamic";
@@ -47,12 +48,15 @@ export async function GET(
   const referer = req.headers.get("referer") ?? undefined;
   after(async () => {
     await recordView(`page:${slug}`);
-    await notifyView(`page:${slug}`, visitor);
+    // Geolocate once, share with both the notification and the stored event.
+    const geo = visitor.ip ? await geolocate(visitor.ip) : null;
+    await notifyView(`page:${slug}`, { ...visitor, referer, geo });
     await recordVisitEvent(`page:${slug}`, {
       ip: visitor.ip,
       userAgent: visitor.userAgent,
       referer,
       countryCode: visitor.country,
+      geo,
     });
   });
 
