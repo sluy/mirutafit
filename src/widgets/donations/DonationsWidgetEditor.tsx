@@ -46,13 +46,28 @@ export default function DonationsWidgetEditor({
         <textarea value={lt.g(config.text)} onChange={(e) => set({ text: lt.s(config.text, e.target.value) })} rows={3} className={`${inputClass()} resize-none`} />
       </Labeled>
 
-      {/* Background */}
-      <Labeled label={t("bg")}>
-        <div className="flex items-center gap-2">
-          <input type="color" value={config.bg || "#0a1410"} onChange={(e) => set({ bg: e.target.value })} className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent p-0" />
-          <input value={config.bg} onChange={(e) => set({ bg: e.target.value })} className={`${inputClass()} max-w-[160px]`} />
+      {/* Background & Size */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Labeled label={t("bg")}>
+          <div className="flex items-center gap-2">
+            <input type="color" value={config.bg || "#0a1410"} onChange={(e) => set({ bg: e.target.value })} className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent p-0" />
+            <input value={config.bg} onChange={(e) => set({ bg: e.target.value })} className={`${inputClass()} max-w-[160px]`} />
+          </div>
+        </Labeled>
+
+        <div>
+          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-ink/40">{t("size")}</span>
+          <label className="flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-ink/10 px-3 hover:bg-ink/5">
+            <input
+              type="checkbox"
+              checked={config.fullHeight ?? false}
+              onChange={(e) => set({ fullHeight: e.target.checked })}
+              className="h-4 w-4 rounded border-ink/20 text-brand focus:ring-brand"
+            />
+            <span className="text-sm font-medium">{t("fullHeight")}</span>
+          </label>
         </div>
-      </Labeled>
+      </div>
 
       {/* Methods */}
       <div>

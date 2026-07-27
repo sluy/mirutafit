@@ -392,7 +392,21 @@
         "slideTitle": "Título",
         "slideSubtitle": "Subtítulo",
         "buttonText": "Texto del botón",
-        "buttonLink": "Enlace del botón"
+        "buttonLink": "Enlace del botón",
+        "imagePosition": "Posición de imagen",
+        "position": {
+          "center": "Centro",
+          "top": "Arriba",
+          "bottom": "Abajo",
+          "left": "Izquierda",
+          "right": "Derecha"
+        },
+        "overlayColor": "Color de superposición",
+        "overlayOpacity": "Opacidad de superposición",
+        "content": "Contenido",
+        "mobileEnabled": "Personalizar para móvil",
+        "mobileImage": "Imagen móvil",
+        "mobileContent": "Contenido móvil"
       },
       "richText": {
         "heightMode": "Alto",
@@ -400,6 +414,12 @@
           "auto": "Auto",
           "fixed": "Fijo",
           "full": "Pantalla completa"
+        },
+        "containerWidth": "Ancho del contenedor",
+        "container": {
+          "standard": "Estándar",
+          "wide": "Ancho",
+          "full": "Ancho completo"
         },
         "height": "Alto (px)",
         "bg": "Fondo",
@@ -508,6 +528,8 @@
         "heading": "Título",
         "subtitle": "Subtítulo",
         "bg": "Fondo",
+        "size": "Tamaño",
+        "fullHeight": "Pantalla completa",
         "transparent": "Transparente",
         "allowModeToggle": "Mostrar el selector persona/marca",
         "defaultMode": "Modo por defecto",
@@ -530,6 +552,8 @@
         "heading": "Título",
         "text": "Texto",
         "bg": "Fondo",
+        "size": "Tamaño",
+        "fullHeight": "Pantalla completa",
         "methods": "Métodos de pago",
         "addMethod": "Agregar método",
         "noMethods": "Aún no hay métodos.",

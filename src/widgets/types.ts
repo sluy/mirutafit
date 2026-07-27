@@ -21,21 +21,36 @@ export type WidgetInstance = {
 
 // ── Per-widget config shapes ──────────────────────────────────
 export type RichTextHeightMode = "auto" | "fixed" | "full";
+export type RichTextContainer = "standard" | "wide" | "full";
 export type RichTextConfig = {
   html: LocalizedText;
   heightMode: RichTextHeightMode; // auto = fit content, fixed = px (scrolls), full = viewport
   height: number; // px, used when heightMode === "fixed"
   bg: string; // "transparent" or a hex background color
+  container?: RichTextContainer;
 };
 
 export type SliderEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "shatter";
+export type ImagePosition = "center" | "top" | "bottom" | "left" | "right";
 export type SliderSlide = {
   id: string;
   image: string | null; // media library fileName
-  title: LocalizedText;
-  subtitle: LocalizedText;
-  buttonText: LocalizedText;
-  buttonLink: string;
+  imagePosition: ImagePosition; // object-position for the background image
+  content: LocalizedText; // rich HTML (replaces old title/subtitle/button)
+  overlayColor: string; // hex, e.g. "#000000"
+  overlayOpacity: number; // 0–100 (percentage)
+  // Responsive: optional mobile-specific overrides (xs/sm)
+  mobileEnabled: boolean;
+  mobileImage: string | null;
+  mobileImagePosition: ImagePosition;
+  mobileContent: LocalizedText;
+  mobileOverlayColor: string;
+  mobileOverlayOpacity: number;
+  // Legacy fields (kept for backwards-compatible read migration)
+  title?: LocalizedText;
+  subtitle?: LocalizedText;
+  buttonText?: LocalizedText;
+  buttonLink?: string;
 };
 export type SliderConfig = {
   effect: SliderEffect;
@@ -175,6 +190,7 @@ export type ContactConfig = {
   contactPhone: string; // tel shown in the banner
   person: ContactModeContent;
   brand: ContactModeContent;
+  fullHeight?: boolean; // make the section fill 100dvh
 };
 
 // Donations / "support me" widget (a dark banner with copyable payment methods).
@@ -190,6 +206,7 @@ export type DonationsConfig = {
   heading: LocalizedText;
   text: LocalizedText;
   bg: string; // hex section background (defaults to the dark ink tone)
+  fullHeight?: boolean; // make the section fill 100dvh
   methods: DonationMethod[];
 };
 

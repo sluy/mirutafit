@@ -392,7 +392,21 @@
         "slideTitle": "Title",
         "slideSubtitle": "Subtitle",
         "buttonText": "Button text",
-        "buttonLink": "Button link"
+        "buttonLink": "Button link",
+        "imagePosition": "Image position",
+        "position": {
+          "center": "Center",
+          "top": "Top",
+          "bottom": "Bottom",
+          "left": "Left",
+          "right": "Right"
+        },
+        "overlayColor": "Overlay color",
+        "overlayOpacity": "Overlay opacity",
+        "content": "Content",
+        "mobileEnabled": "Customize for mobile",
+        "mobileImage": "Mobile image",
+        "mobileContent": "Mobile content"
       },
       "richText": {
         "heightMode": "Height",
@@ -400,6 +414,12 @@
           "auto": "Auto",
           "fixed": "Fixed",
           "full": "Full screen"
+        },
+        "containerWidth": "Container width",
+        "container": {
+          "standard": "Standard",
+          "wide": "Wide",
+          "full": "Full width"
         },
         "height": "Height (px)",
         "bg": "Background",
@@ -508,6 +528,8 @@
         "heading": "Title",
         "subtitle": "Subtitle",
         "bg": "Background",
+        "size": "Size",
+        "fullHeight": "Full screen",
         "transparent": "Transparent",
         "allowModeToggle": "Show the person/brand switch",
         "defaultMode": "Default mode",
@@ -530,6 +552,8 @@
         "heading": "Title",
         "text": "Text",
         "bg": "Background",
+        "size": "Size",
+        "fullHeight": "Full screen",
         "methods": "Payment methods",
         "addMethod": "Add method",
         "noMethods": "No methods yet.",

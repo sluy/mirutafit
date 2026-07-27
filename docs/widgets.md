@@ -57,10 +57,17 @@ A Render that needs server-only data (DB) is an `async` server component — e.g
   `{ html, heightMode: "auto"|"fixed"|"full", height, bg }`. `auto` = fits content
   (min height = content); `fixed` = `height` px with vertical scroll; `full` =
   `100dvh` with scroll. `bg` is `"transparent"` or a hex color.
-- **slider** — Swiper. Config: `{ effect (slide/fade/cube/coverflow/flip),
+- **slider** — Swiper. Config: `{ effect (slide/fade/cube/coverflow/flip/shatter),
   autoplay, interval, height, fullHeight, slides[] }`. `fullHeight` = `100dvh`.
-  Slides: `{ image (media fileName), title, subtitle, buttonText, buttonLink }`,
-  picked via `MediaPicker`.
+  Slides: `{ image (media fileName), imagePosition (center/top/bottom/left/right),
+  content (rich HTML, LocalizedText), overlayColor (hex), overlayOpacity (0-100),
+  mobileEnabled, mobileImage, mobileContent }`. `content` is authored via the
+  Tiptap rich-text editor (same as richText widget) and supports raw HTML source
+  editing. Legacy slides with `title`/`subtitle`/`buttonText`/`buttonLink` are
+  migrated on read (composed into HTML automatically). The overlay color+opacity
+  control what was previously the hardcoded `bg-black/35`. When `mobileEnabled`
+  is true, the slide renders two CSS layers (`hidden sm:block` / `block sm:hidden`)
+  with separate image and content for small viewports.
 - **navbar** — composable bar. Colors (`topBg`/`topText` at scroll 0,
   `scrolledBg`/`scrolledText` once scrolled), `showBrand` + `brandZone`, `fixed`,
   `menuCategories[]`, and **`items[]`** — the builder. Each item has a `zone`

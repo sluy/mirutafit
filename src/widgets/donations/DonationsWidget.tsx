@@ -28,8 +28,13 @@ export default function DonationsWidget({ config }: { config: DonationsConfig })
     }
   };
 
+  let sectionClasses = "relative overflow-hidden py-20 text-white sm:py-28";
+  if (config.fullHeight) {
+    sectionClasses += " min-h-[100dvh] flex flex-col justify-center";
+  }
+
   return (
-    <section style={sectionStyle} className="relative overflow-hidden py-20 text-white sm:py-28">
+    <section style={sectionStyle} className={sectionClasses}>
       {/* Background glows */}
       <div className="absolute -right-24 top-0 h-80 w-80 rounded-full bg-brand/20 blur-3xl" />
       <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-lime/10 blur-3xl" />

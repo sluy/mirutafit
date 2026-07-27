@@ -45,6 +45,25 @@ export default function RichTextWidgetEditor({
           </div>
         </div>
 
+        {/* Container width */}
+        <div>
+          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-ink/40">{t("containerWidth")}</span>
+          <div className="flex gap-1">
+            {(["standard", "wide", "full"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => set({ container: m })}
+                className={`flex-1 rounded-lg border px-2 py-1.5 text-xs font-medium transition-colors ${
+                  (config.container ?? "standard") === m ? "border-brand bg-brand/10 text-brand" : "border-ink/10 text-ink/60 hover:border-brand/40"
+                }`}
+              >
+                {t(`container.${m}`)}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Fixed height (px) */}
         {heightMode === "fixed" && (
           <div>

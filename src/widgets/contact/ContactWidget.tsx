@@ -61,8 +61,13 @@ export default function ContactWidget({ config }: { config: ContactConfig }) {
     }
   };
 
+  let sectionClasses = "py-20 sm:py-28";
+  if (config.fullHeight) {
+    sectionClasses += " min-h-[100dvh] flex flex-col justify-center";
+  }
+
   return (
-    <section style={style} className="py-20 sm:py-28">
+    <section style={style} className={sectionClasses}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           {eyebrow && (

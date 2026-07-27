@@ -21,10 +21,16 @@ export default async function RichTextWidget({ config }: { config: RichTextConfi
   }
   // "auto": no height set → the widget is exactly as tall as its content.
 
+  const container = config.container ?? "standard";
+  let containerClasses = "tiptap mx-auto w-full";
+  if (container === "standard") containerClasses += " max-w-3xl px-4 py-8";
+  else if (container === "wide") containerClasses += " max-w-5xl px-4 py-8";
+  else if (container === "full") containerClasses += " max-w-none";
+
   return (
     <div style={style}>
       <div
-        className="tiptap mx-auto w-full max-w-3xl px-4 py-8"
+        className={containerClasses}
         // Content is authored by admins in the WYSIWYG editor.
         dangerouslySetInnerHTML={{ __html: html }}
       />

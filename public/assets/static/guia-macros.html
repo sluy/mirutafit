@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mi Ruta de Macros y Comida Real — MiRutaFit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ──────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK THEME (default)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="dark"]{
+  --brand:#16c47f;--brand-dark:#0e9d63;--brand-light:#4ade80;
+  --lime:#a3e635;--ink:#0a1410;--ink-soft:#11201a;
+  --bg:#0a1410;
+  --surface:rgba(17,32,26,.55);--surface-alt:rgba(17,32,26,.35);--surface-solid:#0f1f18;
+  --border:rgba(22,196,127,.12);--border-hover:rgba(22,196,127,.3);
+  --text:#f0fdf4;--text-muted:rgba(240,253,244,.6);--text-body:rgba(240,253,244,.82);
+  --glow:rgba(22,196,127,.08);--glow-strong:rgba(22,196,127,.18);
+  /* Hero */
+  --hero-bg:linear-gradient(160deg,#11201a 0%,rgba(22,196,127,.06) 100%);
+  --hero-glow:rgba(22,196,127,.15);
+  --badge-bg:rgba(22,196,127,.12);--badge-border:rgba(22,196,127,.2);--badge-color:#4ade80;
+  --greeting-color:rgba(240,253,244,.85);
+  /* Quote */
+  --quote-bg:rgba(22,196,127,.05);
+  /* Table */
+  --thead-bg:rgba(22,196,127,.08);--td-color:rgba(240,253,244,.8);
+  --td-border:rgba(22,196,127,.06);--tr-hover:rgba(22,196,127,.04);
+  /* Tags */
+  --tag-prot-bg:rgba(96,165,250,.15);--tag-prot-color:#93bbfd;
+  --tag-fat-bg:rgba(251,191,36,.15);--tag-fat-color:#fbbf24;
+  --tag-carb-bg:rgba(248,113,113,.15);--tag-carb-color:#f87171;
+  /* Pills */
+  --pill-prot-bg:rgba(96,165,250,.15);--pill-prot-color:#93bbfd;
+  --pill-fat-bg:rgba(251,191,36,.15);--pill-fat-color:#fbbf24;
+  --pill-carb-bg:rgba(74,222,128,.12);--pill-carb-color:#4ade80;
+  --pill-cal-bg:rgba(255,255,255,.06);
+  /* Food */
+  --food-li-color:rgba(240,253,244,.75);--food-li-border:rgba(255,255,255,.04);
+  --menu-desc:rgba(240,253,244,.78);
+  /* Disclaimer */
+  --disc-bg:rgba(239,68,68,.05);--disc-border:rgba(239,68,68,.15);
+  --disc-color:rgba(240,253,244,.55);--disc-strong:rgba(248,113,113,.8);
+  /* Formula */
+  --formula-bg:rgba(22,196,127,.06);--formula-border:rgba(22,196,127,.18);
+  --example-border:rgba(163,230,53,.12);--calc-bg:rgba(22,196,127,.06);
+  /* Ambient */
+  --glow1:rgba(22,196,127,.10);--glow2:rgba(163,230,53,.06);
+  /* Overlay */
+  --overlay-bg:rgba(10,20,16,.85);
+  /* Fab */
+  --fab-gradient:linear-gradient(135deg,#16c47f,#0cc786);
+  --fab-shadow:rgba(22,196,127,.35);--fab-shadow-hover:rgba(22,196,127,.5);
+  /* Print bg */
+  --print-bg:#0a1410;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIGHT THEME
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="light"]{
+  --brand:#0e9d63;--brand-dark:#0a7a4d;--brand-light:#16c47f;
+  --lime:#65a30d;--ink:#1a2e23;--ink-soft:#f0f7f3;
+  --bg:#f8faf9;
+  --surface:rgba(255,255,255,.75);--surface-alt:rgba(240,253,244,.6);--surface-solid:#fff;
+  --border:rgba(14,157,99,.12);--border-hover:rgba(14,157,99,.28);
+  --text:#1a2e23;--text-muted:rgba(26,46,35,.55);--text-body:rgba(26,46,35,.72);
+  --glow:rgba(14,157,99,.06);--glow-strong:rgba(14,157,99,.12);
+  --hero-bg:linear-gradient(160deg,#f0faf5 0%,#e8f5ee 100%);
+  --hero-glow:rgba(14,157,99,.08);
+  --badge-bg:rgba(14,157,99,.1);--badge-border:rgba(14,157,99,.18);--badge-color:#0e9d63;
+  --greeting-color:rgba(26,46,35,.75);
+  --quote-bg:rgba(14,157,99,.04);
+  --thead-bg:rgba(14,157,99,.06);--td-color:rgba(26,46,35,.7);
+  --td-border:rgba(14,157,99,.06);--tr-hover:rgba(14,157,99,.03);
+  --tag-prot-bg:rgba(59,130,246,.1);--tag-prot-color:#2563eb;
+  --tag-fat-bg:rgba(234,179,8,.1);--tag-fat-color:#b45309;
+  --tag-carb-bg:rgba(239,68,68,.08);--tag-carb-color:#dc2626;
+  --pill-prot-bg:rgba(59,130,246,.1);--pill-prot-color:#2563eb;
+  --pill-fat-bg:rgba(234,179,8,.1);--pill-fat-color:#b45309;
+  --pill-carb-bg:rgba(22,196,127,.1);--pill-carb-color:#0e9d63;
+  --pill-cal-bg:rgba(0,0,0,.04);
+  --food-li-color:rgba(26,46,35,.65);--food-li-border:rgba(0,0,0,.04);
+  --menu-desc:rgba(26,46,35,.68);
+  --disc-bg:rgba(239,68,68,.04);--disc-border:rgba(239,68,68,.12);
+  --disc-color:rgba(26,46,35,.5);--disc-strong:#dc2626;
+  --formula-bg:rgba(14,157,99,.04);--formula-border:rgba(14,157,99,.14);
+  --example-border:rgba(101,163,13,.12);--calc-bg:rgba(14,157,99,.04);
+  --glow1:rgba(14,157,99,.06);--glow2:rgba(101,163,13,.04);
+  --overlay-bg:rgba(248,250,249,.9);
+  --fab-gradient:linear-gradient(135deg,#0e9d63,#0a7a4d);
+  --fab-shadow:rgba(14,157,99,.25);--fab-shadow-hover:rgba(14,157,99,.35);
+  --print-bg:#f8faf9;
+}
+
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Outfit',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.7;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;transition:background .4s,color .4s;
+}
+
+/* ── Ambient glows ─────────────────────────────────────────── */
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+  transition:background .4s;
+}
+body::before{
+  width:600px;height:600px;top:-180px;right:-120px;
+  background:radial-gradient(circle,var(--glow1) 0%,transparent 70%);
+  filter:blur(100px);
+}
+body::after{
+  width:500px;height:500px;bottom:10%;left:-100px;
+  background:radial-gradient(circle,var(--glow2) 0%,transparent 70%);
+  filter:blur(120px);
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
+.page-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.hero{
+  text-align:center;padding:3.5rem 1.5rem 3rem;margin-bottom:2.5rem;
+  border-radius:1.5rem;position:relative;overflow:hidden;
+  background:var(--hero-bg);border:1px solid var(--border);
+  transition:background .4s,border-color .4s;
+}
+.hero::before{
+  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,var(--hero-glow),transparent 70%);
+  filter:blur(80px);pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--badge-bg);border:1px solid var(--badge-border);
+  border-radius:999px;padding:.35rem 1rem;font-size:.8rem;font-weight:600;
+  color:var(--badge-color);letter-spacing:.02em;margin-bottom:1.25rem;
+  text-transform:uppercase;transition:background .4s,border-color .4s,color .4s;
+}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;line-height:1.15;margin-bottom:.75rem}
+.hero h1 .gradient{
+  background:linear-gradient(120deg,var(--brand-light),var(--lime));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero .greeting{
+  font-size:clamp(1rem,2.5vw,1.2rem);color:var(--greeting-color);
+  max-width:640px;margin:0 auto;line-height:1.7;font-weight:400;
+  transition:color .4s;
+}
+.hero .greeting strong{color:var(--text)}
+.hero .greeting .name{color:var(--brand-light);font-weight:700}
+
+/* ── Chapter heading ───────────────────────────────────────── */
+.chapter{margin-top:3rem;margin-bottom:1.5rem}
+.chapter-num{
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--brand);font-weight:700;margin-bottom:.35rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.chapter-num::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border-hover),transparent)}
+.chapter h2{font-size:clamp(1.35rem,3.5vw,1.85rem);font-weight:800;line-height:1.2}
+
+/* ── Glass card ────────────────────────────────────────────── */
+.glass{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:1.25rem;padding:1.75rem;margin-bottom:1.5rem;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:border-color .3s,box-shadow .3s,background .4s;
+}
+.glass:hover{border-color:var(--border-hover);box-shadow:0 0 40px var(--glow)}
+
+/* ── Paragraph / text ──────────────────────────────────────── */
+p{margin-bottom:1rem;color:var(--text-body);transition:color .4s}
+strong{color:var(--text);font-weight:700}
+.highlight{color:var(--brand-light);font-weight:700}
+.quote-box{
+  border-left:3px solid var(--brand);padding:.75rem 1.25rem;
+  background:var(--quote-bg);border-radius:0 .75rem .75rem 0;
+  margin:1.25rem 0;font-style:italic;color:var(--text-muted);
+  transition:background .4s;
+}
+
+/* ── Macro cards ───────────────────────────────────────────── */
+.macro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;margin:1.5rem 0}
+.macro-card{
+  background:var(--surface-alt);border:1px solid var(--border);
+  border-radius:1.25rem;padding:1.5rem;position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s,box-shadow .3s,background .4s;
+}
+.macro-card:hover{transform:translateY(-3px);border-color:var(--border-hover);box-shadow:0 8px 40px var(--glow)}
+.macro-card .num{font-size:2.5rem;font-weight:900;position:absolute;top:.5rem;right:1rem;opacity:.07;line-height:1}
+.macro-card .icon{font-size:1.75rem;margin-bottom:.75rem;display:block}
+.macro-card h3{font-size:1.15rem;font-weight:800;margin-bottom:.5rem}
+.macro-card .tag{display:inline-block;font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;padding:.2rem .6rem;border-radius:999px;font-weight:700;margin-bottom:.75rem}
+.tag-protein{background:var(--tag-prot-bg);color:var(--tag-prot-color)}
+.tag-fat{background:var(--tag-fat-bg);color:var(--tag-fat-color)}
+.tag-carb{background:var(--tag-carb-bg);color:var(--tag-carb-color)}
+
+/* ── Tables ────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;margin:1.5rem 0;border-radius:1rem;border:1px solid var(--border);transition:border-color .4s}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+thead{background:var(--thead-bg);transition:background .4s}
+th{padding:.8rem 1rem;text-align:left;font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--brand-light);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--td-border);color:var(--td-color);transition:color .4s}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:var(--tr-hover)}
+tbody tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600;color:var(--text)}
+
+/* ── Steps ─────────────────────────────────────────────────── */
+.step{display:flex;gap:1.25rem;margin-bottom:1.5rem}
+.step-num{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));display:grid;place-items:center;font-weight:800;font-size:1.05rem;color:#fff;box-shadow:0 0 20px rgba(22,196,127,.2)}
+.step-body h3{font-size:1.05rem;font-weight:700;margin-bottom:.3rem}
+.step-body p{margin-bottom:.5rem}
+
+/* ── Food classification ───────────────────────────────────── */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.food-col{background:var(--surface-alt);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;transition:border-color .3s,box-shadow .3s,background .4s}
+.food-col:hover{border-color:var(--border-hover);box-shadow:0 0 30px var(--glow)}
+.food-col .col-header{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.85rem;margin-bottom:1rem}
+.food-col .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-green{background:#16c47f;box-shadow:0 0 8px rgba(22,196,127,.5)}
+.dot-yellow{background:#facc15;box-shadow:0 0 8px rgba(250,204,21,.5)}
+.dot-red{background:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.5)}
+.food-col ul{list-style:none;padding:0}
+.food-col li{padding:.35rem 0;font-size:.88rem;color:var(--food-li-color);border-bottom:1px solid var(--food-li-border);transition:color .4s}
+.food-col li:last-child{border-bottom:none}
+
+/* ── Menu cards ────────────────────────────────────────────── */
+.menu-card{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;padding:1.5rem 1.75rem;margin-bottom:1.25rem;transition:border-color .3s,box-shadow .3s,background .4s}
+.menu-card:hover{border-color:var(--border-hover);box-shadow:0 0 40px var(--glow)}
+.menu-card .menu-title{display:flex;align-items:center;gap:.6rem;font-size:1.1rem;font-weight:700;margin-bottom:.75rem}
+.menu-card .menu-title .emoji{font-size:1.4rem}
+.menu-card .desc{margin-bottom:.75rem;color:var(--menu-desc);transition:color .4s}
+.menu-card .macros{display:flex;flex-wrap:wrap;gap:.5rem}
+.menu-card .macro-pill{font-size:.72rem;font-weight:600;padding:.3rem .7rem;border-radius:999px;letter-spacing:.02em}
+.pill-prot{background:var(--pill-prot-bg);color:var(--pill-prot-color)}
+.pill-fat{background:var(--pill-fat-bg);color:var(--pill-fat-color)}
+.pill-carb{background:var(--pill-carb-bg);color:var(--pill-carb-color)}
+.pill-cal{background:var(--pill-cal-bg);color:var(--text-muted)}
+
+/* ── Plate rule ────────────────────────────────────────────── */
+.plate-rule{display:flex;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.plate-segment{flex:1;min-width:160px;background:var(--surface-alt);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;text-align:center;transition:border-color .3s,box-shadow .3s,background .4s}
+.plate-segment:hover{border-color:var(--border-hover);box-shadow:0 0 25px var(--glow)}
+.plate-pct{font-size:1.8rem;font-weight:900;background:linear-gradient(120deg,var(--brand-light),var(--lime));-webkit-background-clip:text;background-clip:text;color:transparent}
+.plate-label{font-size:.82rem;color:var(--text-muted);margin-top:.25rem}
+
+/* ── Tips ──────────────────────────────────────────────────── */
+.tip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:1.5rem 0}
+.tip-box{background:var(--surface-alt);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;transition:border-color .3s,box-shadow .3s,background .4s}
+.tip-box:hover{border-color:var(--border-hover);box-shadow:0 0 25px var(--glow)}
+.tip-box .tip-icon{font-size:1.5rem;margin-bottom:.5rem}
+.tip-box h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.tip-box p{font-size:.88rem;margin-bottom:0}
+
+/* ── Disclaimer ────────────────────────────────────────────── */
+.disclaimer{margin-top:3rem;padding:1.5rem;border-radius:1rem;background:var(--disc-bg);border:1px solid var(--disc-border);font-size:.82rem;color:var(--disc-color);line-height:1.65;transition:background .4s,border-color .4s,color .4s}
+.disclaimer strong{color:var(--disc-strong)}
+
+/* ── Footer / Social ───────────────────────────────────────── */
+.guide-footer{text-align:center;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.guide-footer .brand-name{font-size:1.4rem;font-weight:800;margin-bottom:.5rem}
+.guide-footer .brand-name span{background:linear-gradient(120deg,var(--brand-light),var(--lime));-webkit-background-clip:text;background-clip:text;color:transparent}
+.social-links{display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.social-links a{display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s}
+.social-links a:hover{color:var(--brand-light)}
+.social-links a svg{width:18px;height:18px;fill:currentColor}
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .7s cubic-bezier(.16,1,.3,1) both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}
+.d3{animation-delay:.3s}.d4{animation-delay:.4s}
+.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+
+/* ── Formula box ───────────────────────────────────────────── */
+.formula-box{
+  background:var(--formula-bg);border:1px solid var(--formula-border);
+  border-radius:1rem;padding:1.25rem 1.5rem;margin:1rem 0;
+  font-family:'Courier New',Courier,monospace;font-size:1rem;
+  text-align:center;color:var(--brand-light);font-weight:600;
+  letter-spacing:.02em;line-height:1.8;transition:background .4s,border-color .4s;
+}
+.formula-box .formula-label{display:block;font-family:'Outfit',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;margin-bottom:.4rem}
+.formula-box .formula-main{font-size:clamp(.85rem,2.5vw,1.05rem)}
+
+/* Activity list */
+.activity-list{list-style:none;padding:0;margin:.75rem 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.5rem}
+.activity-list li{background:var(--surface-alt);border:1px solid var(--border);border-radius:.75rem;padding:.6rem 1rem;font-size:.85rem;display:flex;justify-content:space-between;align-items:center;transition:background .4s,border-color .4s}
+.activity-list li .factor{color:var(--brand-light);font-weight:700}
+
+/* Example block */
+.example-block{background:var(--surface);border:1px solid var(--example-border);border-radius:1rem;padding:1.25rem 1.5rem;margin:1.25rem 0;transition:background .4s,border-color .4s}
+.example-block .example-label{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--lime);font-weight:700;margin-bottom:.75rem}
+.example-block p{font-size:.92rem;margin-bottom:.6rem}
+.example-block .calc{font-family:'Courier New',monospace;font-size:.9rem;color:var(--brand-light);background:var(--calc-bg);border-radius:.5rem;padding:.5rem .75rem;margin:.4rem 0;display:block;line-height:1.6;transition:background .4s}
+
+/* ── Theme toggle button ───────────────────────────────────── */
+.fab-btn{
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;border:none;
+  background:var(--fab-gradient);color:#fff;cursor:pointer;
+  box-shadow:0 4px 20px var(--fab-shadow);
+  transition:transform .2s,box-shadow .2s,background .4s;
+}
+.fab-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px var(--fab-shadow-hover)}
+.fab-btn svg{width:20px;height:20px;fill:currentColor}
+
+/* Theme toggle icons */
+.fab-btn .icon-sun,.fab-btn .icon-moon{transition:opacity .3s}
+[data-theme="dark"] .fab-btn .icon-sun{display:block}
+[data-theme="dark"] .fab-btn .icon-moon{display:none}
+[data-theme="light"] .fab-btn .icon-sun{display:none}
+[data-theme="light"] .fab-btn .icon-moon{display:block}
+
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media(max-width:600px){
+  .page-wrap{padding:1rem .75rem 3rem}
+  .hero{padding:2.5rem 1rem 2rem;border-radius:1rem}
+  .glass{padding:1.25rem}
+  .step{flex-direction:column;gap:.75rem}
+  table{font-size:.78rem}
+  th,td{padding:.5rem .65rem}
+  .food-grid{grid-template-columns:1fr}
+  .macro-grid{grid-template-columns:1fr}
+  .fab-btn{bottom:1rem;right:1rem;width:38px;height:38px}
+  .formula-box{padding:1rem;font-size:.88rem}
+  .activity-list{grid-template-columns:1fr}
+}
+
+/* ── Print ─────────────────────────────────────────────────── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:var(--print-bg)!important}
+  body::before,body::after{display:none}
+  .fab-btn{display:none!important}
+  .fade-up{animation:none!important;opacity:1!important}
+  .page-wrap{padding:0;max-width:100%}
+  .hero{break-inside:avoid}
+  .glass,.macro-card,.food-col,.menu-card,.tip-box,.plate-segment,.formula-box,.example-block{break-inside:avoid}
+  .chapter{break-after:avoid}
+  .table-wrap{overflow:visible}
+  a{text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <header class="hero fade-up">
+    <div class="hero-badge">MiRutaFit</div>
+    <h1>Guía de <span class="gradient">Macros y Comida Real</span></h1>
+    <p class="greeting">
+      ¡Hola! Soy <span class="name">Stefan</span>, creador de <strong>MiRutaFit</strong>. Me alegra mucho que estés leyendo este material. Aquí te explico exactamente cuál fue la alimentación que me hizo <strong>perder 44 kg en 5 meses</strong>. Te resumo en 7 capítulos todo lo que aprendí sobre calorías, macronutrientes, comida real y cómo estructurar tus platos para sanar tu metabolismo desde la raíz.
+    </p>
+  </header>
+
+  <!-- CAPÍTULO 1 -->
+  <div class="chapter fade-up d2">
+    <div class="chapter-num">Capítulo 1</div>
+    <h2>El Inicio de Mi Ruta — Mi Historia de Transformación</h2>
+  </div>
+
+  <div class="glass fade-up d3">
+    <p>¡Bienvenido a <strong>MiRutaFit</strong>! Si estás leyendo esto, seguramente estás cansado de la misma historia de siempre: dietas restrictivas que duran tres días, pasar hambre insoportable, vivir contando calorías de platos insípidos de "lechuguita y pechuga a la plancha" y, al final, ver cómo la báscula no se mueve o sufrir un efecto rebote demoledor.</p>
+    <p>Te entiendo perfectamente porque yo estuve exactamente ahí. En el peor momento de mi camino, mi báscula llegó a marcar un pico crítico de <strong>198 kilos</strong>. El punto de inflexión definitivo arrancó formalmente cuando registré <strong>145.6 kilos</strong>. En esa etapa, mi cuerpo parecía no responder, el cansancio era permanente, la ropa dejaba de servirme y la frustración se volvió cotidiana. Parecía que mi metabolismo estaba completamente roto.</p>
+
+    <div class="quote-box">
+      <strong>La Revelación que Cambió Mi Vida:</strong> Todo cambió el día que entendí una verdad biológica fundamental: <span class="highlight">La comida no es una pesadilla de calorías ni un castigo; la comida es INFORMACIÓN Y COMBUSTIBLE BIOLÓGICO.</span> Cada bocado le envía una orden hormonal directa a tu cuerpo (especialmente a la insulina). Si le das la información correcta, tu organismo apaga la acumulación de grasa y activa la quema constante de combustible acumulado.
+    </div>
+
+    <p>En tan solo <strong>5 meses</strong> logré perder <strong>44 kg</strong> sanando mi metabolismo desde la raíz. No utilicé fármacos mágicos, no pasé hambre y no hizo falta vivir encerrado en un gimnasio. El cambio lo logré combinando alimentación cetogénica (keto), comida real sin ultraprocesados y, sobre todo, aprendiendo a dominar los macronutrientes de forma consciente y sostenible.</p>
+    <p>Esta guía no es un libro teórico aburrido ni un manual médico denso. Es mi <strong>bitácora práctica, probada y estructurada</strong> para devolverte el control de tu salud. Si aprendes a dominar tus macros y a estructurar tus platos con comida real, <strong>dominarás tu cuerpo para siempre</strong>.</p>
+  </div>
+
+  <!-- CAPÍTULO 2 — CALORÍAS Y METABOLISMO BASAL -->
+  <div class="chapter fade-up">
+    <div class="chapter-num">Capítulo 2</div>
+    <h2>Calorías y Metabolismo Basal — Lo Primero que Aprendí</h2>
+  </div>
+
+  <div class="glass fade-up">
+    <p>Antes de hablar de macronutrientes, lo primero que tuve que entender fue algo todavía más básico: <strong>¿qué es una caloría y cuántas necesita mi cuerpo?</strong> Sin esta base, todo lo demás queda en el aire.</p>
+
+    <h3 style="font-size:1.05rem;margin:1rem 0 .5rem">🔥 ¿Qué es una caloría?</h3>
+    <p>Una caloría (kcal) es simplemente una <strong>unidad de energía</strong>. Es el combustible que tu cuerpo usa para todo: respirar, pensar, digerir, caminar, entrenar. Cada alimento que comes le entrega una cantidad específica de energía a tu cuerpo:</p>
+    <ul style="list-style:none;padding:0;margin:0 0 1rem">
+      <li style="padding:.3rem 0;font-size:.92rem">🥩 <strong>1g de proteína</strong> = 4 kcal</li>
+      <li style="padding:.3rem 0;font-size:.92rem">🧈 <strong>1g de grasa</strong> = 9 kcal</li>
+      <li style="padding:.3rem 0;font-size:.92rem">🍞 <strong>1g de carbohidrato</strong> = 4 kcal</li>
+    </ul>
+    <p>Si tu cuerpo recibe <strong>más energía</strong> de la que gasta → la almacena como grasa. Si recibe <strong>menos</strong> → usa sus reservas (tu grasa corporal) para cubrir la diferencia. Así de simple.</p>
+
+    <h3 style="font-size:1.05rem;margin:1.25rem 0 .5rem">🧮 Tu Tasa Metabólica Basal (TMB)</h3>
+    <p>La TMB es la cantidad de calorías que tu cuerpo quema <strong>sin hacer absolutamente nada</strong>, solo por estar vivo (respirar, bombear sangre, mantener tu temperatura). Es como el "consumo en reposo" de tu motor.</p>
+    <p>La fórmula más utilizada y confiable es la de <strong>Mifflin-St Jeor</strong>:</p>
+
+    <div class="formula-box">
+      <span class="formula-label">Hombres</span>
+      <span class="formula-main">TMB = (10 × peso en kg) + (6.25 × altura en cm) − (5 × edad) + 5</span>
+    </div>
+    <div class="formula-box">
+      <span class="formula-label">Mujeres</span>
+      <span class="formula-main">TMB = (10 × peso en kg) + (6.25 × altura en cm) − (5 × edad) − 161</span>
+    </div>
+
+    <h3 style="font-size:1.05rem;margin:1.25rem 0 .5rem">🏃 Tu Gasto Total Diario (TDEE)</h3>
+    <p>Nadie se queda en cama todo el día. La TMB es solo la base. Para saber cuántas calorías <strong>realmente gastas</strong>, multiplica tu TMB por un factor de actividad:</p>
+
+    <ul class="activity-list">
+      <li>Sedentario (oficina, sin ejercicio) <span class="factor">× 1.2</span></li>
+      <li>Ligeramente activo (1-3 días/sem) <span class="factor">× 1.375</span></li>
+      <li>Moderadamente activo (3-5 días/sem) <span class="factor">× 1.55</span></li>
+      <li>Muy activo (6-7 días/sem) <span class="factor">× 1.725</span></li>
+    </ul>
+
+    <h3 style="font-size:1.05rem;margin:1.5rem 0 .5rem">📉 El Déficit Calórico — Tu Motor de Pérdida de Grasa</h3>
+    <p>Una vez que conoces tu TDEE, solo necesitas comer <strong>por debajo</strong> de ese número para que tu cuerpo empiece a usar su grasa como combustible. Un déficit de <strong>500 a 700 kcal diarias</strong> es un punto ideal: lo suficientemente agresivo para ver resultados, pero sostenible para no pasar hambre ni ralentizar tu metabolismo.</p>
+
+    <div class="example-block">
+      <div class="example-label">📝 Ejemplo práctico — Mi caso (Stefan)</div>
+      <p>Cuando arranqué con 145.6 kg, hice este cálculo (hombre, 40 años, 183 cm):</p>
+      <span class="calc">
+        TMB = (10 × 145.6) + (6.25 × 183) − (5 × 40) + 5<br>
+        TMB = 1,456 + 1,143.75 − 200 + 5 = <strong>2,405 kcal</strong>
+      </span>
+      <p>Como mi actividad era sedentaria al inicio:</p>
+      <span class="calc">
+        TDEE = 2,405 × 1.2 = <strong>2,886 kcal/día</strong>
+      </span>
+      <p>Con un déficit de ~600 kcal, mi objetivo era comer alrededor de <strong>2,300 kcal/día</strong>. La cetogénica me ayudó a lograrlo <em>sin sentir hambre</em>, porque la grasa y la proteína sacian muchísimo más que los carbohidratos refinados.</p>
+    </div>
+
+    <div class="quote-box">
+      <strong>💡 Dato clave:</strong> No necesitas contar calorías obsesivamente para siempre. Este cálculo es para que <strong>entiendas el panorama</strong> y sepas dónde estás parado. Cuando domines los macros de los próximos capítulos, tu cuerpo se regulará naturalmente.
+    </div>
+  </div>
+
+  <!-- CAPÍTULO 3 — MACRONUTRIENTES -->
+  <div class="chapter fade-up">
+    <div class="chapter-num">Capítulo 3</div>
+    <h2>La Verdad sobre los Macronutrientes</h2>
+  </div>
+
+  <p class="fade-up" style="margin-bottom:1.5rem">Para transformar tu físico no necesitas fórmulas complejas ni aplicaciones obsesivas. Necesitas comprender las <strong>tres llaves maestras</strong> de tu nutrición:</p>
+
+  <div class="macro-grid">
+    <div class="macro-card fade-up d1">
+      <span class="num">1</span>
+      <span class="icon">🥩</span>
+      <span class="tag tag-protein">Constructor Estructural</span>
+      <h3>Proteína</h3>
+      <p style="font-size:.9rem">Es el macronutriente <strong>no negociable</strong>. Proporciona los aminoácidos para construir y preservar tu masa muscular mientras pierdes grasa. Es el macronutriente con mayor efecto térmico (tu cuerpo gasta energía digiriéndolo) y el que activa la <strong>saciedad prolongada</strong> por horas.</p>
+    </div>
+    <div class="macro-card fade-up d2">
+      <span class="num">2</span>
+      <span class="icon">🥑</span>
+      <span class="tag tag-fat">Combustible Limpio</span>
+      <h3>Grasas Saludables</h3>
+      <p style="font-size:.9rem">Al reducir los carbohidratos, tu cuerpo requiere una fuente de energía eficiente. La grasa saludable proporciona <strong>energía constante</strong> sin picos glucémicos, mantiene tus hormonas balanceadas y te permite entrar en <strong>cetosis nutricional</strong> para usar tu propia grasa como combustible.</p>
+    </div>
+    <div class="macro-card fade-up d3">
+      <span class="num">3</span>
+      <span class="icon">⚡</span>
+      <span class="tag tag-carb">Interruptor Hormonal</span>
+      <h3>Carbohidratos</h3>
+      <p style="font-size:.9rem">Los carbohidratos refinados y azúcares elevan la glucosa e incrementan la insulina (la hormona de almacenamiento). Con la insulina elevada, la quema de grasa está <strong>bloqueada</strong>. Al mantener los carbohidratos netos al mínimo (<strong>menos de 20-25g al día</strong>), activas el interruptor hacia el modo quemador de grasa.</p>
+    </div>
+  </div>
+
+  <div class="glass fade-up">
+    <h3 style="font-size:1.05rem;margin-bottom:.75rem">⚠️ El Gran Error de la Báscula</h3>
+    <p>Uno de los errores más comunes al empezar es pensar que <strong>100 gramos de un alimento equivalen a 100 gramos del macronutriente puro</strong>. Por ejemplo, si colocas una pechuga de pollo sobre la báscula y marca 100g, ese alimento <strong>NO</strong> contiene 100g de proteína. Aporta aproximadamente entre 25g y 30g de proteína pura.</p>
+    <p style="margin-bottom:0"><strong>Pesar tu comida al inicio no es una obsesión: es educar a tu ojo para no comer a ciegas.</strong></p>
+  </div>
+
+  <h3 class="fade-up" style="font-size:1rem;font-weight:700;margin:2rem 0 .75rem;color:var(--brand-light)">📊 Tabla de Aportes Reales por cada 100g de Alimento</h3>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead><tr><th>Alimento (100g crudos)</th><th>Proteína</th><th>Grasa</th><th>Carbos Netos</th><th>Calorías</th></tr></thead>
+      <tbody>
+        <tr><td>Pechuga de Pollo (sin piel)</td><td>31g</td><td>3.6g</td><td>0g</td><td>165 kcal</td></tr>
+        <tr><td>Carne Molida de Res (80/20)</td><td>26g</td><td>17g</td><td>0g</td><td>254 kcal</td></tr>
+        <tr><td>Huevo Entero (2 uds. grandes)</td><td>13g</td><td>11g</td><td>0.8g</td><td>155 kcal</td></tr>
+        <tr><td>Filete de Salmón</td><td>20g</td><td>13g</td><td>0g</td><td>208 kcal</td></tr>
+        <tr><td>Aguacate / Palta</td><td>2g</td><td>15g</td><td>2g</td><td>160 kcal</td></tr>
+        <tr><td>Queso Madurado / Parmesano</td><td>28g</td><td>28g</td><td>1.3g</td><td>392 kcal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CAPÍTULO 4 -->
+  <div class="chapter fade-up"><div class="chapter-num">Capítulo 4</div><h2>Cómo Calcular Tus Requerimientos de Macros</h2></div>
+  <p class="fade-up" style="margin-bottom:1.5rem">Para iniciar de manera efectiva en tu ruta de pérdida de grasa manteniendo tu masa muscular, sigue estos <strong>3 pasos prácticos</strong>:</p>
+  <div class="glass fade-up">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Establece tu Requerimiento Proteico Diario</h3><p>Para personas que buscan perder grasa conservando su masa muscular, la pauta recomendada es consumir entre <strong>1.6g y 2.2g de proteína</strong> por cada kilogramo de peso objetivo (o peso magro).</p><div class="quote-box" style="margin-top:.5rem"><strong>Ejemplo:</strong> Si tu peso objetivo es 75 kg → 75 × 2.0g = <strong>150g de proteína real al día</strong><br>(≈ 500–600g pesados de carne/pollo/pescado a lo largo del día)</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><h3>Fija el Límite de Carbohidratos Netos</h3><p>Para garantizar una <strong>cetosis nutricional</strong> constante y mantener la insulina bajo control, limita los carbohidratos netos (<em>Carbohidratos Totales menos Fibra</em>) a un rango de <strong>20g a 25g diarios</strong>, provenientes de vegetales verdes bajos en almidón.</p></div></div>
+    <div class="step" style="margin-bottom:0"><div class="step-num">3</div><div class="step-body"><h3>Ajusta la Grasa Según Tu Saciabilidad</h3><p style="margin-bottom:0">La grasa es tu <strong>palanca energética de ajuste</strong>. Ajusta entre <strong>60g y 90g de grasa saludable</strong> al día para sazonar, cocinar y mantener la energía estable mientras tu cuerpo utiliza su propia grasa como combustible.</p></div></div>
+  </div>
+
+  <!-- CAPÍTULO 5 -->
+  <div class="chapter fade-up"><div class="chapter-num">Capítulo 5</div><h2>La Clasificación Definitiva de Alimentos MiRutaFit</h2></div>
+  <div class="food-grid fade-up">
+    <div class="food-col"><div class="col-header"><span class="dot dot-green"></span> Proteínas Top</div><ul><li>Huevos enteros reales</li><li>Carne de res (cortes o molida)</li><li>Pollo y pavo (con piel)</li><li>Cerdo y chicharrón crujiente</li><li>Pescados grasos (Salmón, Atún)</li><li>Mariscos y camarones</li><li>Vísceras (Hígado de res)</li></ul></div>
+    <div class="food-col"><div class="col-header"><span class="dot dot-green"></span> Grasas Saludables</div><ul><li>Mantequilla real (no margarina)</li><li>Manteca de cerdo pura</li><li>Aceite de Oliva Extra Virgen</li><li>Aceite de Coco Virgen</li><li>Aguacate / Palta</li><li>Quesos madurados (Parmesano)</li><li>Crema de leche / Nata</li></ul></div>
+    <div class="food-col"><div class="col-header"><span class="dot dot-yellow"></span> Vegetales Bajos en Carbos</div><ul><li>Espinacas y Acelgas</li><li>Brócoli y Coliflor</li><li>Calabacín (Zucchini)</li><li>Pepino y Lechuga</li><li>Espárragos</li><li>Champiñones y Hongos</li><li>Pimentón verde</li></ul></div>
+    <div class="food-col"><div class="col-header"><span class="dot dot-red"></span> Frena Tu Proceso</div><ul><li>Azúcar refinada y Jarabes</li><li>Maltitol y endulzantes nocivos</li><li>Harinas (Trigo, Maíz, Avena)</li><li>Aceites vegetales de semillas</li><li>Frutas dulces / jugos procesados</li><li>Ultraprocesados "Diet" o "Fit"</li></ul></div>
+  </div>
+
+  <!-- CAPÍTULO 6 -->
+  <div class="chapter fade-up"><div class="chapter-num">Capítulo 6</div><h2>Ejemplos Prácticos de Platos Balanceados y Porciones Reales</h2></div>
+  <h3 class="fade-up" style="font-size:1rem;font-weight:700;margin-bottom:1rem">🍽️ La Regla Visual del Plato Perfecto</h3>
+  <div class="plate-rule fade-up">
+    <div class="plate-segment"><div class="plate-pct">50-60%</div><div class="plate-label">Proteína de alta calidad<br><small style="color:var(--text-muted)">(200g – 250g pesados en crudo)</small></div></div>
+    <div class="plate-segment"><div class="plate-pct">30-40%</div><div class="plate-label">Grasas saludables<br><small style="color:var(--text-muted)">(½ aguacate, mantequilla, aceite de oliva)</small></div></div>
+    <div class="plate-segment"><div class="plate-pct" style="font-size:1.2rem">Opcional</div><div class="plate-label">Vegetales verdes<br><small style="color:var(--text-muted)">bajos en carbohidratos</small></div></div>
+  </div>
+  <h3 class="fade-up" style="font-size:1rem;font-weight:700;margin:2rem 0 1rem">4 Menús Tipo con Cantidades y Porciones Precisas</h3>
+
+  <div class="menu-card fade-up"><div class="menu-title"><span class="emoji">🍳</span> Menú 1: Desayuno Cetogénico de Fuerza</div><p class="desc">3 a 4 huevos enteros revueltos en 1 cucharada de mantequilla real (15g), acompañados de 3 lonjas de tocineta crujiente y ½ aguacate mediano con sal marina.</p><div class="macros"><span class="macro-pill pill-prot">32g Proteína</span><span class="macro-pill pill-fat">42g Grasa</span><span class="macro-pill pill-carb">2g Carbos Netos</span><span class="macro-pill pill-cal">~510 kcal</span></div></div>
+  <div class="menu-card fade-up"><div class="menu-title"><span class="emoji">🥩</span> Menú 2: Almuerzo Potente de Carne Real</div><p class="desc">250g de carne de res (Solomo, Ribeye o Bife) a la plancha con 1 cucharada de mantequilla derretida con ajo, acompañado de 150g de brócoli salteado con aceite de oliva extra virgen.</p><div class="macros"><span class="macro-pill pill-prot">58g Proteína</span><span class="macro-pill pill-fat">48g Grasa</span><span class="macro-pill pill-carb">4g Carbos Netos</span><span class="macro-pill pill-cal">~680 kcal</span></div></div>
+  <div class="menu-card fade-up"><div class="menu-title"><span class="emoji">🍗</span> Menú 3: Cena Ligera y Saciante</div><p class="desc">220g de pollo asado con su piel crujiente, ensalada verde de espinacas frescas, pepino y 30g de queso parmesano rallado, aderezado con 1.5 cucharadas de aceite de oliva extra virgen y limón.</p><div class="macros"><span class="macro-pill pill-prot">52g Proteína</span><span class="macro-pill pill-fat">36g Grasa</span><span class="macro-pill pill-carb">3g Carbos Netos</span><span class="macro-pill pill-cal">~530 kcal</span></div></div>
+  <div class="menu-card fade-up"><div class="menu-title"><span class="emoji">🥓</span> Menú 4: Opción Rápida / Cero Complicaciones</div><p class="desc">150g de carne molida 80/20 cocinada en su propia grasa, 50g de chicharrón de cerdo crujiente y 40g de queso madurado en cubos.</p><div class="macros"><span class="macro-pill pill-prot">55g Proteína</span><span class="macro-pill pill-fat">50g Grasa</span><span class="macro-pill pill-carb">1g Carbo Neto</span><span class="macro-pill pill-cal">~670 kcal</span></div></div>
+
+  <!-- CAPÍTULO 7 -->
+  <div class="chapter fade-up"><div class="chapter-num">Capítulo 7</div><h2>Claves de Medición y Errores a Evitar</h2></div>
+  <div class="tip-grid fade-up">
+    <div class="tip-box"><div class="tip-icon">📏</div><h4>No te obsesiones con la báscula de baño</h4><p>El peso corporal fluctúa diariamente por agua, digestión y masa muscular. Utiliza una <strong>cinta métrica</strong> y tómate fotos de progreso cada 15 días. Esos son tus mejores indicadores.</p></div>
+    <div class="tip-box"><div class="tip-icon">🚫</div><h4>Evita los "Keto Ultraprocesados"</h4><p>Panes, galletas y barritas etiquetadas como "Keto" suelen usar <strong>maltitol y almidones</strong> que elevan la glucosa. Prioriza siempre comida real de un solo ingrediente.</p></div>
+    <div class="tip-box"><div class="tip-icon">⚡</div><h4>Los Electrolitos son Obligatorios</h4><p>Al reducir carbohidratos, tus riñones excretan más agua y minerales. Si experimentas dolor de cabeza o fatiga, consume suficiente <strong>sal marina, magnesio y potasio</strong>.</p></div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer fade-up">
+    <strong>⚠️ AVISO LEGAL Y DISCLAIMER:</strong> Este documento refleja de manera divulgativa mi experiencia personal y aprendizaje como creador de MiRutaFit. El contenido de esta guía tiene fines puramente educativos e informativos y no sustituye el diagnóstico, tratamiento, prescripción o consejo médico o nutricional profesional. Cada organismo es diferente. Antes de realizar cambios drásticos en tu alimentación o iniciar un protocolo cetogénico, consulta a un médico o profesional de la salud calificado.
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="guide-footer fade-up">
+    <div class="brand-name">Mi<span>Ruta</span>Fit</div>
+    <p style="font-size:.85rem;color:var(--text-muted)">Sigue mi ruta en redes</p>
+    <div class="social-links">
+      <a href="https://www.tiktok.com/@mirutafit" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.06a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.49z"/></svg> @mirutafit</a>
+      <a href="https://www.youtube.com/@mirutafit" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.75 31.75 0 000 12a31.75 31.75 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.75 31.75 0 0024 12a31.75 31.75 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> @mirutafit</a>
+      <a href="https://www.instagram.com/mirutafit.oficial" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.97.24 2.44.41a4.08 4.08 0 011.51.98c.46.46.78.93.98 1.51.17.47.36 1.27.41 2.44.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.24 1.97-.41 2.44a4.08 4.08 0 01-.98 1.51 4.08 4.08 0 01-1.51.98c-.47.17-1.27.36-2.44.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.97-.24-2.44-.41a4.08 4.08 0 01-1.51-.98 4.08 4.08 0 01-.98-1.51c-.17-.47-.36-1.27-.41-2.44C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.24-1.97.41-2.44a4.08 4.08 0 01.98-1.51 4.08 4.08 0 011.51-.98c.47-.17 1.27-.36 2.44-.41C8.84 2.17 9.22 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.84 5.84 0 00-2.13 1.38A5.84 5.84 0 00.63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91a5.84 5.84 0 001.38 2.13 5.84 5.84 0 002.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.84 5.84 0 002.13-1.38 5.84 5.84 0 001.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.84 5.84 0 00-1.38-2.13A5.84 5.84 0 0019.86.63C19.1.33 18.22.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zM12 16a4 4 0 110-8 4 4 0 010 8zm6.41-11.85a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z"/></svg> mirutafit.oficial</a>
+    </div>
+  </footer>
+
+</div><!-- .page-wrap -->
+
+<!-- Theme toggle button -->
+<button class="fab-btn" id="themeBtn" title="Cambiar tema">
+  <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v1a1 1 0 01-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1zm9-9a1 1 0 010 2h-1a1 1 0 010-2h1zM4 11a1 1 0 010 2H3a1 1 0 010-2h1zm14.07-6.07a1 1 0 010 1.41l-.7.71a1 1 0 01-1.42-1.42l.71-.7a1 1 0 011.41 0zM7.05 16.24a1 1 0 010 1.42l-.7.7a1 1 0 01-1.42-1.41l.71-.71a1 1 0 011.41 0zm11.9 1.41a1 1 0 01-1.41 0l-.71-.7a1 1 0 011.42-1.42l.7.71a1 1 0 010 1.41zM7.05 7.76a1 1 0 01-1.41 0l-.71-.71a1 1 0 011.42-1.41l.7.7a1 1 0 010 1.42z"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73A8.15 8.15 0 019.08 5.49a8.59 8.59 0 01.25-2 1 1 0 00-.64-1.11A1 1 0 007.78 2.3 10.14 10.14 0 002 12.05 10.12 10.12 0 0012 22a10.14 10.14 0 009.73-7.37 1 1 0 00-.09-.63z"/></svg>
+</button>
+
+<script>
+(function(){
+  /* ── Scroll animations ── */
+  const els = document.querySelectorAll('.fade-up');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.style.opacity = '1'); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.style.animationPlayState = 'running'; io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => { el.style.animationPlayState = 'paused'; io.observe(el); });
+
+  /* ── Theme toggle ── */
+  const html = document.documentElement;
+  const saved = localStorage.getItem('mirutafit-guide-theme');
+  if (saved) html.setAttribute('data-theme', saved);
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('mirutafit-guide-theme', next);
+  });
+
+
+})();
+</script>
+</body>
+</html>

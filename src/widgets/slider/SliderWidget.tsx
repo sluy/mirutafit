@@ -85,10 +85,12 @@ function buildTiles(containerW: number, containerH: number): {
 
 function GridFlipOverlay({
   imageUrl,
+  imagePosition,
   containerEl,
   onComplete,
 }: {
   imageUrl: string;
+  imagePosition: string;
   containerEl: HTMLDivElement | null;
   onComplete: () => void;
 }) {
@@ -141,7 +143,7 @@ function GridFlipOverlay({
               clipPath: t.clipPath,
               backgroundImage: `url(${imageUrl})`,
               backgroundSize: "cover",
-              backgroundPosition: "center",
+              backgroundPosition: imagePosition,
               transformOrigin: `${t.originX}% ${t.originY}%`,
               backfaceVisibility: "hidden",
               animation: `_gridFlip ${TILE_FLIP_MS}ms ${t.delay}ms ease-in forwards`,
@@ -153,45 +155,131 @@ function GridFlipOverlay({
   );
 }
 
-// ── Slide content ─────────────────────────────────────────────
-
-function SlideContent({ slide }: { slide: SliderSlide }) {
-  const locale = useLocale();
+// ── Legacy migration helper ───────────────────────────────────
+// Compose HTML from old title/subtitle/buttonText/buttonLink fields when a
+// slide still uses the legacy schema (no `content` set).
+function migrateLegacyContent(slide: SliderSlide, locale: string): string {
   const title = resolveText(slide.title, locale);
   const subtitle = resolveText(slide.subtitle, locale);
   const buttonText = resolveText(slide.buttonText, locale);
+  const link = slide.buttonLink || "#";
+
+  if (!title && !subtitle && !buttonText) return "";
+
+  let html = "";
+  if (title)
+    html += `<h2 style="font-size:2.5rem;font-weight:800;text-shadow:0 2px 4px rgba(0,0,0,.3)">${title}</h2>`;
+  if (subtitle)
+    html += `<p style="margin-top:0.75rem;max-width:42rem;font-size:1.125rem;text-shadow:0 1px 3px rgba(0,0,0,.3)">${subtitle}</p>`;
+  if (buttonText)
+    html += `<a href="${link}" style="display:inline-block;margin-top:1.5rem;padding:0.75rem 1.75rem;border-radius:9999px;background:var(--color-brand,#16c47f);color:#fff;font-weight:600;box-shadow:0 10px 15px rgba(22,196,127,.3);transition:transform .2s">${buttonText}</a>`;
+  return html;
+}
+
+// ── Overlay rgba helper ───────────────────────────────────────
+function overlayRgba(hex: string | undefined, opacity: number | undefined): string {
+  const h = (hex ?? "#000000").replace("#", "");
+  const r = parseInt(h.substring(0, 2), 16) || 0;
+  const g = parseInt(h.substring(2, 4), 16) || 0;
+  const b = parseInt(h.substring(4, 6), 16) || 0;
+  const a = Math.min(100, Math.max(0, opacity ?? 35)) / 100;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── Single image+content layer ────────────────────────────────
+function SlideLayer({
+  image,
+  imagePosition,
+  contentHtml,
+  overlayBg,
+}: {
+  image: string | null;
+  imagePosition: string;
+  contentHtml: string;
+  overlayBg: string;
+}) {
   return (
     <div className="relative h-full w-full bg-ink">
-      {slide.image && (
+      {image && (
         <img
-          src={mediaUrl(slide.image)}
-          alt={title}
+          src={mediaUrl(image)}
+          alt=""
           className="h-full w-full object-cover"
+          style={{ objectPosition: imagePosition }}
         />
       )}
-      {(title || subtitle || buttonText) && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/35 p-6 text-center text-white">
-          {title && (
-            <h2 className="font-display text-3xl font-extrabold drop-shadow sm:text-5xl">
-              {title}
-            </h2>
-          )}
-          {subtitle && (
-            <p className="mt-3 max-w-2xl text-lg drop-shadow">
-              {subtitle}
-            </p>
-          )}
-          {buttonText && (
-            <a
-              href={slide.buttonLink || "#"}
-              className="mt-6 rounded-full bg-brand px-7 py-3 font-semibold text-white shadow-lg shadow-brand/30 transition-transform hover:scale-105"
-            >
-              {buttonText}
-            </a>
-          )}
-        </div>
-      )}
+      {/* Overlay + content */}
+      <div
+        className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white"
+        style={{ backgroundColor: overlayBg }}
+      >
+        {contentHtml && (
+          <div
+            className="slider-content max-w-3xl"
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
+        )}
+      </div>
     </div>
+  );
+}
+
+// ── Slide content (with responsive variants) ──────────────────
+
+function SlideContent({ slide }: { slide: SliderSlide }) {
+  const locale = useLocale();
+
+  // Resolve content — prefer new `content` field, fall back to legacy migration
+  const desktopContent =
+    resolveText(slide.content, locale) ||
+    migrateLegacyContent(slide, locale);
+
+  const overlayBg = overlayRgba(slide.overlayColor, slide.overlayOpacity);
+  const imgPos = slide.imagePosition ?? "center";
+
+  // When mobile is enabled, render two layers with CSS visibility
+  if (slide.mobileEnabled) {
+    const mobileContent =
+      resolveText(slide.mobileContent, locale) || desktopContent;
+    const mobileImg = slide.mobileImage ?? slide.image;
+    const mobileImgPos = slide.mobileImagePosition ?? imgPos;
+    const mobileOverlay = overlayRgba(
+      slide.mobileOverlayColor ?? slide.overlayColor,
+      slide.mobileOverlayOpacity ?? slide.overlayOpacity,
+    );
+
+    return (
+      <div className="relative h-full w-full">
+        {/* Desktop layer */}
+        <div className="hidden h-full w-full md:block">
+          <SlideLayer
+            image={slide.image}
+            imagePosition={imgPos}
+            contentHtml={desktopContent}
+            overlayBg={overlayBg}
+          />
+        </div>
+        {/* Mobile layer */}
+        <div className="block h-full w-full md:hidden">
+          <SlideLayer
+            image={mobileImg}
+            imagePosition={mobileImgPos}
+            contentHtml={mobileContent}
+            overlayBg={mobileOverlay}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Single (non-responsive) render
+  return (
+    <SlideLayer
+      image={slide.image}
+      imagePosition={imgPos}
+      contentHtml={desktopContent}
+      overlayBg={overlayBg}
+    />
   );
 }
 
@@ -251,6 +339,7 @@ function SwiperWithShatter({
   const containerRef = useRef<HTMLDivElement>(null);
   const [overlay, setOverlay] = useState<{
     url: string;
+    position: string;
     key: number;
   } | null>(null);
   const prevRealIdx = useRef(0);
@@ -263,7 +352,7 @@ function SwiperWithShatter({
 
       const prevSlide = slides[prev];
       if (prevSlide?.image) {
-        setOverlay({ url: mediaUrl(prevSlide.image), key: Date.now() });
+        setOverlay({ url: mediaUrl(prevSlide.image), position: prevSlide.imagePosition ?? "center", key: Date.now() });
       }
     },
     [isShatter, slides],
@@ -299,6 +388,7 @@ function SwiperWithShatter({
         <GridFlipOverlay
           key={overlay.key}
           imageUrl={overlay.url}
+          imagePosition={overlay.position}
           containerEl={containerRef.current}
           onComplete={clearOverlay}
         />
