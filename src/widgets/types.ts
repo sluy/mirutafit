@@ -234,8 +234,39 @@ export type GoTopConfig = {
   round: boolean; // fully round vs rounded square
 };
 
+// Interactive Metabolism & Macro Calculator widget
+export type MacroCalcDisplayMode = "panel" | "floating";
+export type MacroCalcFloatingPosition =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "top-center"
+  | "bottom-center";
+export type MacroCalcSex = "male" | "female";
+export type MacroCalcActivity = "sedentary" | "light" | "moderate" | "high" | "extreme";
+
+export type MacroCalcConfig = {
+  eyebrow: LocalizedText;
+  heading: LocalizedText;
+  subtitle: LocalizedText;
+  bg: string; // section background color (hex or "transparent")
+  accentColor: string; // brand accent color (hex)
+  displayMode: MacroCalcDisplayMode; // "panel" or "floating"
+  fullHeight?: boolean; // if panel mode, force min-h-[100dvh]
+  floatingPosition: MacroCalcFloatingPosition; // button position when floating
+  showGuideLink: boolean; // show CTA link to /static/guia-macros
+  guideLinkText: LocalizedText;
+  defaultSex: MacroCalcSex;
+  defaultAge: number;
+  defaultHeight: number;
+  defaultWeight: number;
+  defaultActivity: MacroCalcActivity;
+};
+
 // Editor components receive the current config and report changes.
 export type WidgetEditorProps<C = Record<string, unknown>> = {
   config: C;
   onChange: (config: C) => void;
 };
+

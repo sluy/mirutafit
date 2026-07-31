@@ -9,6 +9,7 @@ import type {
   DonationsConfig,
   CommunityConfig,
   GoTopConfig,
+  MacroCalcConfig,
 } from "./types";
 
 /**
@@ -31,12 +32,14 @@ export type WidgetTypeKey =
   | "contact"
   | "donations"
   | "community"
-  | "goTop";
+  | "goTop"
+  | "macroCalc";
 
 export type WidgetMeta = {
   type: WidgetTypeKey;
   defaultConfig: Record<string, unknown>;
 };
+
 
 const richTextDefault: RichTextConfig = {
   html: "<p></p>",
@@ -204,6 +207,24 @@ const goTopDefault: GoTopConfig = {
   round: true,
 };
 
+const macroCalcDefault: MacroCalcConfig = {
+  eyebrow: "Calculadora Interactiva",
+  heading: "Calculadora de Metabolismo Basal",
+  subtitle: "Conoce tu gasto energético diario, rango de peso saludable y los tipos de déficit calórico recomendados.",
+  bg: "#0a1410",
+  accentColor: "#16c47f",
+  displayMode: "panel",
+  fullHeight: false,
+  floatingPosition: "bottom-right",
+  showGuideLink: true,
+  guideLinkText: "Ver Guía Completa de Macronutrientes 📖",
+  defaultSex: "male",
+  defaultAge: 28,
+  defaultHeight: 175,
+  defaultWeight: 80,
+  defaultActivity: "moderate",
+};
+
 export const WIDGET_META: Record<WidgetTypeKey, WidgetMeta> = {
   richText: { type: "richText", defaultConfig: richTextDefault },
   slider: { type: "slider", defaultConfig: sliderDefault },
@@ -215,6 +236,7 @@ export const WIDGET_META: Record<WidgetTypeKey, WidgetMeta> = {
   donations: { type: "donations", defaultConfig: donationsDefault },
   community: { type: "community", defaultConfig: communityDefault },
   goTop: { type: "goTop", defaultConfig: goTopDefault },
+  macroCalc: { type: "macroCalc", defaultConfig: macroCalcDefault },
 };
 
 export const WIDGET_TYPE_KEYS = Object.keys(WIDGET_META) as WidgetTypeKey[];

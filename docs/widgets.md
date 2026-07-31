@@ -107,6 +107,13 @@ A Render that needs server-only data (DB) is an `async` server component — e.g
   left/right), offset, bg, iconColor, showAfter (px), round }`. Client component;
   renders `position: fixed` itself (not part of the pinned top stack), appears
   once scrolled past `showAfter`.
+- **macroCalc** — interactive metabolism, composition & health calculator. `{ eyebrow,
+  heading, subtitle, bg, accentColor, displayMode ("panel"|"floating"), fullHeight,
+  floatingPosition ("top-left"|"top-right"|"bottom-left"|"bottom-right"|"top-center"|"bottom-center"),
+  showGuideLink, guideLinkText, defaultSex, defaultAge, defaultHeight, defaultWeight, defaultActivity }`.
+  Calculates BMR (Mifflin-St Jeor), TDEE, BMI, healthy weight range, BMI status avatar,
+  caloric deficit levels, and macro breakdown. Links to `/static/guia-macros`.
+
 
 ## Fixed / pinned widgets (important)
 

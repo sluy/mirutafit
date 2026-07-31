@@ -11,6 +11,7 @@ import ContactWidgetEditor from "./contact/ContactWidgetEditor";
 import DonationsWidgetEditor from "./donations/DonationsWidgetEditor";
 import CommunityWidgetEditor from "./community/CommunityWidgetEditor";
 import GoTopWidgetEditor from "./goTop/GoTopWidgetEditor";
+import MacroCalcWidgetEditor from "./macroCalc/MacroCalcWidgetEditor";
 import type { WidgetTypeKey } from "./meta";
 import type { WidgetEditorProps } from "./types";
 
@@ -30,4 +31,5 @@ export const WIDGET_EDITORS: Record<
   donations: DonationsWidgetEditor,
   community: CommunityWidgetEditor,
   goTop: GoTopWidgetEditor,
+  macroCalc: MacroCalcWidgetEditor,
 };
