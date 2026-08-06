@@ -6,13 +6,24 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 
 /**
+ * Checks if HTML contains custom tags or attributes that Tiptap's standard
+ * schema would strip/simplify (e.g. <div>, <section>, class="", style="", etc.)
+ */
+function hasComplexHtml(html: string): boolean {
+  if (!html) return false;
+  return (
+    /<(div|section|article|span|button|script|style|iframe|svg|form|input|table|tr|td|th|thead|tbody)\b/i.test(html) ||
+    /\b(class|style|id|data-[a-z0-9-]+)\s*=/i.test(html)
+  );
+}
+
+/**
  * Reusable WYSIWYG editor (Tiptap). Emits HTML via `onChange`.
- * Used for rich/html content in the Media library and reusable anywhere else.
+ * Used for rich/html content in widgets, media library, etc.
  *
- * The "</>" toolbar button toggles a raw-HTML source view: a textarea where you
- * can hand-write/paste HTML. Editing there saves the HTML verbatim; switching
- * back to the visual editor re-parses it through Tiptap (which may normalize or
- * drop tags its schema doesn't support).
+ * Automatically opens in raw-HTML source view if the content contains complex
+ * tags/attributes (like Tailwind classes, divs, inline styles), preserving the
+ * exact HTML string without Tiptap stripping or reformatting it.
  */
 export default function RichTextEditor({
   value,
@@ -21,8 +32,10 @@ export default function RichTextEditor({
   value: string;
   onChange: (html: string) => void;
 }) {
-  const [source, setSource] = useState(false);
-  const [draft, setDraft] = useState(value); // raw HTML while in source mode
+  // If initial value contains custom HTML (divs, classes, etc.), default to source (code) mode
+  const isComplex = hasComplexHtml(value);
+  const [source, setSource] = useState(isComplex);
+  const [draft, setDraft] = useState(value);
 
   const editor = useEditor({
     extensions: [
@@ -31,7 +44,12 @@ export default function RichTextEditor({
     ],
     content: value,
     immediatelyRender: false, // avoid SSR hydration mismatch
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onUpdate: ({ editor }) => {
+      // Only emit from Tiptap if we are in visual mode
+      if (!source) {
+        onChange(editor.getHTML());
+      }
+    },
     editorProps: {
       attributes: { class: "tiptap focus:outline-none" },
     },
@@ -40,13 +58,21 @@ export default function RichTextEditor({
   if (!editor) return null;
 
   const openSource = () => {
-    setDraft(editor.getHTML());
+    // When switching to source mode, prefer the raw value if present, or editor HTML
+    setDraft(value || editor.getHTML());
     setSource(true);
   };
 
   const closeSource = () => {
-    // Push the hand-written HTML back into the editor, then report the
-    // normalized result to the parent.
+    // If draft has complex HTML that Tiptap schema doesn't support, warn before converting
+    if (hasComplexHtml(draft)) {
+      const confirmSwitch = window.confirm(
+        "El código HTML contiene etiquetas o clases avanzadas (como <div>, class, style) que el editor visual podría simplificar. ¿Deseas convertirlo a texto visual de todos modos?"
+      );
+      if (!confirmSwitch) return;
+    }
+
+    // Push the hand-written HTML back into the editor, then report the normalized result
     editor.commands.setContent(draft);
     onChange(editor.getHTML());
     setSource(false);
@@ -57,19 +83,28 @@ export default function RichTextEditor({
       <Toolbar
         editor={editor}
         source={source}
+        isComplex={hasComplexHtml(source ? draft : value)}
         onToggleSource={source ? closeSource : openSource}
       />
       {source ? (
-        <textarea
-          value={draft}
-          onChange={(e) => {
-            setDraft(e.target.value);
-            onChange(e.target.value);
-          }}
-          spellCheck={false}
-          className="block max-h-[55vh] min-h-[180px] w-full resize-y overflow-y-auto bg-gray-50/60 p-4 font-mono text-xs leading-relaxed text-ink focus:outline-none"
-          placeholder="<p>Escribe o pega HTML…</p>"
-        />
+        <div>
+          <div className="flex items-center justify-between border-b border-ink/10 bg-amber-500/10 px-3 py-1.5 text-xs text-amber-800 dark:text-amber-300">
+            <span>
+              <strong>Modo Código HTML Raw:</strong> Editando HTML directo. Se preservarán todas las clases y etiquetas.
+            </span>
+          </div>
+          <textarea
+            value={draft}
+            onChange={(e) => {
+              const val = e.target.value;
+              setDraft(val);
+              onChange(val);
+            }}
+            spellCheck={false}
+            className="block max-h-[55vh] min-h-[220px] w-full resize-y overflow-y-auto bg-gray-50/60 p-4 font-mono text-xs leading-relaxed text-ink focus:outline-none"
+            placeholder="<p>Escribe o pega HTML…</p>"
+          />
+        </div>
       ) : (
         <EditorContent editor={editor} className="max-h-[55vh] overflow-y-auto p-4" />
       )}
@@ -80,10 +115,12 @@ export default function RichTextEditor({
 function Toolbar({
   editor,
   source,
+  isComplex,
   onToggleSource,
 }: {
   editor: Editor;
   source: boolean;
+  isComplex: boolean;
   onToggleSource: () => void;
 }) {
   const Btn = ({
@@ -145,7 +182,18 @@ function Toolbar({
       <Btn label="↶" disabled={off} on={() => editor.chain().focus().undo().run()} />
       <Btn label="↷" disabled={off} on={() => editor.chain().focus().redo().run()} />
       <span className="ml-auto h-5 w-px bg-ink/10" />
-      <Btn label="</>" title="Editar HTML" active={source} on={onToggleSource} />
+      <Btn
+        label="</>"
+        title={source ? "Cambiar a Editor Visual" : "Ver / Editar Código HTML"}
+        active={source}
+        on={onToggleSource}
+      />
+      {isComplex && !source && (
+        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+          HTML Complejo
+        </span>
+      )}
     </div>
   );
 }
+
